@@ -2,131 +2,100 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>B.E.A.C.O.N. Vitals Simulator</title>
+<meta name="viewport" content="width=600, height=600, initial-scale=1.0">
+<title>B.E.A.C.O.N. Vitals</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
   :root {
-    --navy:        #0B2545;
-    --blue:        #2563EB;
-    --muted:       #5B7BA0;
-    --green:       #16a34a;
-    --green-lt:    #22C55E;
-    --amber:       #ea580c;
-    --red:         #dc2626;
+    --white:  #E8F4FF;
+    --blue:   #60A5FA;
+    --muted:  #94A3B8;
+    --green:  #22C55E;
+    --amber:  #FB923C;
+    --red:    #F87171;
   }
 
   html, body {
-    width: 100%;
-    min-height: 100%;
+    width: 600px;
+    height: 600px;
+    overflow: hidden;
     font-family: 'Inter', system-ui, sans-serif;
-    color: var(--navy);
+    color: var(--white);
+    background: #000000; /* transparent on additive display */
   }
 
-  body {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 100vh;
-    background: linear-gradient(160deg, #ddeeff 0%, #eaf3ff 40%, #f4f9ff 100%);
-    position: relative;
-  }
-
-  /* background orbs */
-  #bg { position: fixed; inset: -20%; z-index: 0; pointer-events: none; overflow: hidden; }
-  .orb { position: absolute; border-radius: 50%; filter: blur(90px); animation: drift 20s ease-in-out infinite alternate; }
-  .orb1 { width: 500px; height: 500px; background: rgba(191,219,254,0.55); top: -10%; left: -10%; animation-duration: 22s; }
-  .orb2 { width: 380px; height: 380px; background: rgba(219,234,254,0.50); bottom: 5%; right: 0%; animation-duration: 18s; animation-delay: -8s; }
-  .orb3 { width: 260px; height: 260px; background: rgba(147,197,253,0.30); top: 40%; right: 10%; animation-duration: 26s; animation-delay: -4s; }
-  @keyframes drift {
-    0%   { transform: translate(0,0) scale(1); }
-    50%  { transform: translate(20px,-15px) scale(1.05); }
-    100% { transform: translate(-12px,22px) scale(0.97); }
-  }
-
-  /* panel */
   #panel {
     position: relative;
-    z-index: 2;
-    width: 560px;
-    padding: 24px 26px 22px;
-    background: rgba(255,255,255,0.28);
-    backdrop-filter: blur(28px) saturate(180%) brightness(1.06);
-    -webkit-backdrop-filter: blur(28px) saturate(180%) brightness(1.06);
-    border: 1px solid rgba(255,255,255,0.72);
-    box-shadow:
-      0 2px 0 rgba(255,255,255,0.88) inset,
-      0 -1px 0 rgba(160,200,255,0.18) inset,
-      0 12px 48px rgba(30,90,200,0.10),
-      0 2px 10px rgba(30,90,200,0.07);
-    border-radius: 20px;
-  }
-  #panel::before {
-    content: '';
-    position: absolute; inset: 0; border-radius: inherit;
-    background: radial-gradient(ellipse 300px 80px at 50% -10px, rgba(255,255,255,0.55), transparent 60%);
-    pointer-events: none;
+    width: 600px;
+    height: 600px;
+    padding: 22px 24px 20px;
+    background: rgba(0,0,0,0.76);
+    border: 1px solid rgba(96,165,250,0.22);
+    display: flex;
+    flex-direction: column;
+    gap: 11px;
   }
 
   /* corner brackets */
-  .corner { position: absolute; width: 18px; height: 18px; border-color: rgba(37,99,235,0.28); border-style: solid; }
+  .corner { position: absolute; width: 18px; height: 18px; border-color: rgba(96,165,250,0.55); border-style: solid; }
   .corner.tl { top:10px; left:10px;   border-width: 2px 0 0 2px; }
   .corner.tr { top:10px; right:10px;  border-width: 2px 2px 0 0; }
   .corner.bl { bottom:10px; left:10px;  border-width: 0 0 2px 2px; }
   .corner.br { bottom:10px; right:10px; border-width: 0 2px 2px 0; }
 
   /* header */
-  #live-row { display: flex; align-items: center; gap: 8px; margin-bottom: 18px; }
+  #live-row { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
   .pulse-dot {
     width: 9px; height: 9px; border-radius: 50%;
-    background: var(--green-lt);
-    box-shadow: 0 0 8px var(--green-lt), 0 0 16px rgba(34,197,94,0.35);
+    background: var(--green);
+    box-shadow: 0 0 8px var(--green), 0 0 18px rgba(34,197,94,0.55);
     flex-shrink: 0;
     animation: pulse 1.8s ease-in-out infinite;
   }
   @keyframes pulse {
     0%,100% { opacity:1; transform:scale(1); }
-    50%      { opacity:0.5; transform:scale(0.82); }
+    50%      { opacity:0.45; transform:scale(0.82); }
   }
   .live-label { font-size: 0.62rem; letter-spacing: 0.18em; color: var(--green); font-weight: 700; text-transform: uppercase; }
 
   /* vitals grid */
-  #vitals-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; }
+  #vitals-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    gap: 10px;
+    flex: 1;
+    min-height: 0;
+  }
   .v-card {
-    background: rgba(255,255,255,0.48);
-    border: 1px solid rgba(255,255,255,0.72);
-    box-shadow: 0 1px 0 rgba(255,255,255,0.85) inset;
+    background: rgba(255,255,255,0.055);
+    border: 1px solid rgba(96,165,250,0.18);
     border-radius: 12px;
     padding: 14px 16px 12px;
     display: flex; flex-direction: column; gap: 2px;
   }
   .v-label { font-size: 0.62rem; letter-spacing: 0.10em; color: var(--blue); font-weight: 700; text-transform: uppercase; margin-bottom: 4px; }
   .v-val-row { display: flex; align-items: baseline; gap: 4px; line-height: 1; }
-  .v-val { font-family: 'DM Mono', monospace; font-size: 3rem; font-weight: 400; color: var(--navy); line-height: 1; letter-spacing: -0.02em; }
+  .v-val { font-family: 'DM Mono', monospace; font-size: 3rem; font-weight: 400; color: var(--white); line-height: 1; letter-spacing: -0.02em; }
   .v-unit { font-size: 0.9rem; color: var(--muted); font-weight: 400; }
   .v-trend { font-size: 0.78rem; margin-top: 7px; font-weight: 600; }
 
   /* ECG */
   #ecg-wrap {
-    border-radius: 10px; overflow: hidden;
-    background: rgba(255,255,255,0.55);
-    border: 1px solid rgba(255,255,255,0.72);
-    box-shadow: 0 1px 0 rgba(255,255,255,0.85) inset;
+    flex-shrink: 0;
+    border-radius: 10px;
+    overflow: hidden;
+    background: rgba(0,0,0,0.55);
+    border: 1px solid rgba(96,165,250,0.18);
     line-height: 0;
   }
   #ecg-canvas { display: block; }
 </style>
 </head>
 <body>
-
-<div id="bg">
-  <div class="orb orb1"></div>
-  <div class="orb orb2"></div>
-  <div class="orb orb3"></div>
-</div>
 
 <div id="panel">
   <div class="corner tl"></div><div class="corner tr"></div>
@@ -174,46 +143,35 @@ let targets = { hr:72, spo2:96, sys:118, dia:76, rr:16 };
 let bpm = INIT.hr;
 
 const ri   = (lo,hi) => Math.floor(Math.random()*(hi-lo+1))+lo;
-const rif  = (lo,hi) => Math.random()*(hi-lo)+lo;       // float version
+const rif  = (lo,hi) => Math.random()*(hi-lo)+lo;
 const lerp = (a,b,t) => a+(b-a)*t;
 const cl   = (v,lo,hi) => Math.max(lo,Math.min(hi,v));
 
-// HR: drifts gradually, every 10–18s — target nudges rather than jumps
 (function hrTimer() {
-  // move target by a small delta from current rather than jumping to a random value
   targets.hr = cl(targets.hr + ri(-4, 4), 58, 82);
   setTimeout(hrTimer, ri(10000, 18000));
 })();
 
-// SpO2: drifts slowly, every 8–14s
 (function spo2Timer() { targets.spo2 = ri(94,100); setTimeout(spo2Timer, ri(8000,14000)); })();
+(function rrTimer()   { targets.rr   = ri(12,20);  setTimeout(rrTimer,   ri(8000,14000)); })();
 
-// RR: drifts slowly, every 8–14s
-(function rrTimer() { targets.rr = ri(12,20); setTimeout(rrTimer, ri(8000,14000)); })();
-
-// BP: only retargets every 60s
 setInterval(() => {
   targets.sys = cl(INIT.sys + ri(-14,14), 80,170);
   targets.dia = cl(INIT.dia + ri(-9,9),   50,105);
 }, 60000);
 
-// Tick: lerp toward targets; SpO2 and RR get extra per-tick noise
 setInterval(() => {
-  // HRV: lerp toward target + small beat-to-beat noise (±1 bpm) for natural variability
-  vitals.hr   = Math.round(cl(lerp(vitals.hr, targets.hr, 0.10) + rif(-0.9, 0.9), 40, 180));
-  // SpO2: slow lerp + tiny noise
+  vitals.hr   = Math.round(cl(lerp(vitals.hr,   targets.hr,   0.10) + rif(-0.9, 0.9), 40, 180));
   vitals.spo2 = Math.round(cl(lerp(vitals.spo2, targets.spo2, 0.12) + rif(-0.3, 0.3), 85, 100));
-  // BP: slow lerp — only target changes every 60s
   vitals.sys  = Math.round(cl(lerp(vitals.sys,  targets.sys,  0.06), 80, 180));
   vitals.dia  = Math.round(cl(lerp(vitals.dia,  targets.dia,  0.06), 50, 110));
-  // RR: slow lerp + tiny noise
   vitals.rr   = Math.round(cl(lerp(vitals.rr,   targets.rr,   0.12) + rif(-0.3, 0.3), 8, 30));
-  bpm = vitals.hr;   // ECG speed tracks HR directly
+  bpm = vitals.hr;
   renderUI();
 }, 800);
 
 // ── TRENDS ──────────────────────────────────────────────────────────────────
-const OK='#16a34a', WARN='#ea580c', CRIT='#dc2626';
+const OK='#22C55E', WARN='#FB923C', CRIT='#F87171';
 function trend(key,v) {
   if (key==='hr')   { if(v.hr<50) return[`↓ Severe bradycardia`,CRIT]; if(v.hr<60) return[`↓ Bradycardia`,WARN]; if(v.hr>130) return[`↑ Severe tachycardia`,CRIT]; if(v.hr>100) return[`↑ Tachycardia`,WARN]; return[`↑ Normal sinus`,OK]; }
   if (key==='spo2') { if(v.spo2>=95) return[`→ Stable`,OK]; if(v.spo2>=90) return[`↓ Low — monitor`,WARN]; return[`↓ Critical hypoxia`,CRIT]; }
@@ -235,14 +193,13 @@ function renderUI() {
     el.style.color = color;
   }
 }
-renderUI(); // paint initial values + trend colors immediately
+renderUI();
 
 // ── ECG ──────────────────────────────────────────────────────────────────────
-// Script is at bottom of body so DOM is ready. Dimensions are hardcoded — no need to wait for layout.
 (function() {
   const canvas = document.getElementById('ecg-canvas');
   const dpr = window.devicePixelRatio || 1;
-  const CW = 508, CH = 90;
+  const CW = 552, CH = 90;
 
   canvas.width        = Math.round(CW * dpr);
   canvas.height       = Math.round(CH * dpr);
@@ -295,39 +252,39 @@ renderUI(); // paint initial values + trend colors immediately
 
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
-    // background fill
-    ctx.fillStyle = 'rgba(240,248,255,0.6)';
+    // dark background
+    ctx.fillStyle = 'rgba(0,0,8,0.7)';
     ctx.fillRect(0, 0, CW, CH);
 
     // minor grid
-    ctx.lineWidth=0.5; ctx.strokeStyle='rgba(37,99,235,0.10)';
+    ctx.lineWidth=0.5; ctx.strokeStyle='rgba(96,165,250,0.10)';
     ctx.beginPath();
     const sb=BEAT_PX/25;
     for (let x=0; x<=CW; x+=sb) { ctx.moveTo(x,0); ctx.lineTo(x,CH); }
     for (let y=0; y<=CH; y+=CH/8) { ctx.moveTo(0,y); ctx.lineTo(CW,y); }
     ctx.stroke();
     // major grid
-    ctx.lineWidth=0.5; ctx.strokeStyle='rgba(37,99,235,0.20)';
+    ctx.lineWidth=0.5; ctx.strokeStyle='rgba(96,165,250,0.22)';
     ctx.beginPath();
     const lb=BEAT_PX/5;
     for (let x=0; x<=CW; x+=lb) { ctx.moveTo(x,0); ctx.lineTo(x,CH); }
     ctx.stroke();
 
-    // waveform path
+    // waveform
     ctx.lineJoin='round'; ctx.lineCap='round';
     const p = new Path2D();
     for (let i=0; i<CW; i++) {
       const x=i, y=mid - buf[(head+i)%CW];
       i===0 ? p.moveTo(x,y) : p.lineTo(x,y);
     }
-    ctx.lineWidth=3.5; ctx.strokeStyle='rgba(37,99,235,0.15)'; ctx.stroke(p);
-    ctx.lineWidth=2;   ctx.strokeStyle='#2563EB';               ctx.stroke(p);
+    ctx.lineWidth=3.5; ctx.strokeStyle='rgba(96,165,250,0.20)'; ctx.stroke(p);
+    ctx.lineWidth=2;   ctx.strokeStyle='#60A5FA';                ctx.stroke(p);
 
     // scan-head wipe
     const hx = head===0 ? CW-1 : head-1;
     const g = ctx.createLinearGradient(hx-30, 0, hx+4, 0);
-    g.addColorStop(0, 'rgba(240,248,255,0)');
-    g.addColorStop(1, 'rgba(240,248,255,0.95)');
+    g.addColorStop(0, 'rgba(0,0,8,0)');
+    g.addColorStop(1, 'rgba(0,0,8,0.92)');
     ctx.fillStyle = g;
     ctx.fillRect(hx-30, 0, 34, CH);
 
