@@ -180,9 +180,9 @@
     font-weight: 400;
   }
   .v-trend {
-    font-size: 0.72rem;
-    margin-top: 6px;
-    font-weight: 500;
+    font-size: 0.78rem;
+    margin-top: 7px;
+    font-weight: 600;
     letter-spacing: 0.01em;
   }
 
@@ -360,15 +360,17 @@ updateUI();
   const dpr    = window.devicePixelRatio || 1;
 
   function resize() {
-    const W = canvas.parentElement.clientWidth;
+    const W = canvas.parentElement.clientWidth || document.getElementById("panel").clientWidth - 52;
     const H = 90;
     canvas.style.width  = W + "px";
     canvas.style.height = H + "px";
-    canvas.width  = W * dpr;
-    canvas.height = H * dpr;
+    canvas.width  = Math.round(W * dpr);
+    canvas.height = Math.round(H * dpr);
+    buf = null;
   }
-  resize();
-  window.addEventListener("resize", () => { resize(); buf = null; });
+  // delay until after first paint so clientWidth is available
+  requestAnimationFrame(() => { requestAnimationFrame(() => { resize(); }); });
+  window.addEventListener("resize", resize);
 
   // ECG waveform math (physiologically accurate P-QRS-T)
   function tri(t, t0, dur, a) {
