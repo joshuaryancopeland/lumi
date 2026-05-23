@@ -178,8 +178,12 @@ const rif  = (lo,hi) => Math.random()*(hi-lo)+lo;       // float version
 const lerp = (a,b,t) => a+(b-a)*t;
 const cl   = (v,lo,hi) => Math.max(lo,Math.min(hi,v));
 
-// HR: drifts slowly, every 8–14s
-(function hrTimer() { targets.hr = ri(60,80); setTimeout(hrTimer, ri(8000,14000)); })();
+// HR: drifts gradually, every 10–18s — target nudges rather than jumps
+(function hrTimer() {
+  // move target by a small delta from current rather than jumping to a random value
+  targets.hr = cl(targets.hr + ri(-4, 4), 58, 82);
+  setTimeout(hrTimer, ri(10000, 18000));
+})();
 
 // SpO2: drifts slowly, every 8–14s
 (function spo2Timer() { targets.spo2 = ri(94,100); setTimeout(spo2Timer, ri(8000,14000)); })();
@@ -195,7 +199,8 @@ setInterval(() => {
 
 // Tick: lerp toward targets; SpO2 and RR get extra per-tick noise
 setInterval(() => {
-  vitals.hr   = Math.round(cl(lerp(vitals.hr,   targets.hr,   0.13), 40, 180));
+  // HRV: lerp toward target + small beat-to-beat noise (±1 bpm) for natural variability
+  vitals.hr   = Math.round(cl(lerp(vitals.hr, targets.hr, 0.10) + rif(-0.9, 0.9), 40, 180));
   // SpO2: slow lerp + tiny noise
   vitals.spo2 = Math.round(cl(lerp(vitals.spo2, targets.spo2, 0.12) + rif(-0.3, 0.3), 85, 100));
   // BP: slow lerp — only target changes every 60s
