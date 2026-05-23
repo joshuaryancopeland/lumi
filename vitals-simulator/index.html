@@ -227,37 +227,36 @@ function renderUI() {
 renderUI(); // paint initial values + trend colors immediately
 
 // ── ECG ──────────────────────────────────────────────────────────────────────
-window.addEventListener('load', function() {
+// Script is at bottom of body so DOM is ready. Dimensions are hardcoded — no need to wait for layout.
+(function() {
   const canvas = document.getElementById('ecg-canvas');
-  const dpr    = window.devicePixelRatio || 1;
-
-  // Use the panel's known content width: 560px panel - 52px padding = 508px
+  const dpr = window.devicePixelRatio || 1;
   const CW = 508, CH = 90;
-  canvas.width        = CW * dpr;
-  canvas.height       = CH * dpr;
+
+  canvas.width        = Math.round(CW * dpr);
+  canvas.height       = Math.round(CH * dpr);
   canvas.style.width  = CW + 'px';
   canvas.style.height = CH + 'px';
 
   const ctx = canvas.getContext('2d');
   if (!ctx) return;
 
-  // P-QRS-T waveform math
   function tri(t,t0,dur,a) {
-    if(dur<=0||t<t0||t>t0+dur) return 0;
-    const h=dur*0.5; return(-Math.abs(t-(t0+h))+h)*(a/h);
+    if (dur<=0||t<t0||t>t0+dur) return 0;
+    const h=dur*0.5; return (-Math.abs(t-(t0+h))+h)*(a/h);
   }
   function para(t,t0,dur,a) {
-    if(dur<=0||t<t0||t>t0+dur) return 0;
-    const h=dur*0.5; return(-(t-(t0+h))**2+h*h)*(a/(h*h));
+    if (dur<=0||t<t0||t>t0+dur) return 0;
+    const h=dur*0.5; return (-(t-(t0+h))**2+h*h)*(a/(h*h));
   }
   function ecgAt(nT) {
     const T=60/bpm, sq=Math.sqrt(T);
-    const pd=Math.max(0.01,0.37*sq-0.22*T-0.06);
-    const pq=Math.max(0.01,0.33*sq-0.18*T-0.08);
-    const qrs=Math.max(0.01,0.25*sq-0.16*T-0.02);
-    const q=qrs*0.23,r=qrs*0.42,s=qrs*0.35;
-    const st=Math.max(0.01,-0.09*sq+0.13*T+0.04);
-    const td=Math.max(0.01, 1.06*sq-0.51*T-0.33);
+    const pd =Math.max(0.01, 0.37*sq-0.22*T-0.06);
+    const pq =Math.max(0.01, 0.33*sq-0.18*T-0.08);
+    const qrs=Math.max(0.01, 0.25*sq-0.16*T-0.02);
+    const q=qrs*0.23, r=qrs*0.42, s=qrs*0.35;
+    const st=Math.max(0.01, -0.09*sq+0.13*T+0.04);
+    const td=Math.max(0.01,  1.06*sq-0.51*T-0.33);
     const t=((nT%1)+1)%1*T;
     const qS=pd+pq, rS=qS+q, sS=rS+r, tS=qS+qrs+st;
     let v=para(t,0,pd,0.24);
@@ -271,61 +270,61 @@ window.addEventListener('load', function() {
   let head=0, beatT=0, prev=null;
 
   function draw(now) {
-    if(!prev) prev=now;
-    const dt=Math.min(now-prev,50);
-    prev=now;
+    if (!prev) prev = now;
+    const dt = Math.min(now-prev, 50);
+    prev = now;
 
     const mid=CH*0.52, amp=CH*0.44;
-    const pxCount=Math.round(BEAT_PX/(60000/bpm)*dt);
-    for(let i=0;i<pxCount;i++) {
-      buf[head]=ecgAt(beatT)*amp;
-      beatT=(beatT+1/BEAT_PX)%1;
-      head=(head+1)%CW;
+    const pxCount = Math.max(1, Math.round(BEAT_PX / (60000/bpm) * dt));
+    for (let i=0; i<pxCount; i++) {
+      buf[head] = ecgAt(beatT)*amp;
+      beatT = (beatT + 1/BEAT_PX) % 1;
+      head  = (head  + 1) % CW;
     }
 
-    ctx.save();
-    ctx.scale(dpr,dpr);
-    ctx.clearRect(0,0,CW,CH);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
-    // grid — minor
-    ctx.lineWidth=0.5; ctx.strokeStyle='rgba(37,99,235,0.09)';
+    // background fill
+    ctx.fillStyle = 'rgba(240,248,255,0.6)';
+    ctx.fillRect(0, 0, CW, CH);
+
+    // minor grid
+    ctx.lineWidth=0.5; ctx.strokeStyle='rgba(37,99,235,0.10)';
     ctx.beginPath();
     const sb=BEAT_PX/25;
-    for(let x=0;x<=CW;x+=sb){ctx.moveTo(x,0);ctx.lineTo(x,CH);}
-    for(let y=0;y<=CH;y+=CH/8){ctx.moveTo(0,y);ctx.lineTo(CW,y);}
+    for (let x=0; x<=CW; x+=sb) { ctx.moveTo(x,0); ctx.lineTo(x,CH); }
+    for (let y=0; y<=CH; y+=CH/8) { ctx.moveTo(0,y); ctx.lineTo(CW,y); }
     ctx.stroke();
-    // grid — major
-    ctx.lineWidth=0.5; ctx.strokeStyle='rgba(37,99,235,0.18)';
+    // major grid
+    ctx.lineWidth=0.5; ctx.strokeStyle='rgba(37,99,235,0.20)';
     ctx.beginPath();
     const lb=BEAT_PX/5;
-    for(let x=0;x<=CW;x+=lb){ctx.moveTo(x,0);ctx.lineTo(x,CH);}
+    for (let x=0; x<=CW; x+=lb) { ctx.moveTo(x,0); ctx.lineTo(x,CH); }
     ctx.stroke();
 
-    // waveform
+    // waveform path
     ctx.lineJoin='round'; ctx.lineCap='round';
-    const p=new Path2D();
-    for(let i=0;i<CW;i++){
-      const x=i, y=mid-buf[(head+i)%CW];
-      i===0?p.moveTo(x,y):p.lineTo(x,y);
+    const p = new Path2D();
+    for (let i=0; i<CW; i++) {
+      const x=i, y=mid - buf[(head+i)%CW];
+      i===0 ? p.moveTo(x,y) : p.lineTo(x,y);
     }
-    // glow
-    ctx.lineWidth=4; ctx.strokeStyle='rgba(37,99,235,0.12)'; ctx.stroke(p);
-    // crisp line
-    ctx.lineWidth=1.8; ctx.strokeStyle='#2563EB'; ctx.stroke(p);
+    ctx.lineWidth=3.5; ctx.strokeStyle='rgba(37,99,235,0.15)'; ctx.stroke(p);
+    ctx.lineWidth=2;   ctx.strokeStyle='#2563EB';               ctx.stroke(p);
 
     // scan-head wipe
-    const hx=head===0?CW-1:head-1;
-    const g=ctx.createLinearGradient(hx-28,0,hx+4,0);
-    g.addColorStop(0,'rgba(255,255,255,0)');
-    g.addColorStop(1,'rgba(255,255,255,0.9)');
-    ctx.fillStyle=g; ctx.fillRect(hx-28,0,32,CH);
+    const hx = head===0 ? CW-1 : head-1;
+    const g = ctx.createLinearGradient(hx-30, 0, hx+4, 0);
+    g.addColorStop(0, 'rgba(240,248,255,0)');
+    g.addColorStop(1, 'rgba(240,248,255,0.95)');
+    ctx.fillStyle = g;
+    ctx.fillRect(hx-30, 0, 34, CH);
 
-    ctx.restore();
     requestAnimationFrame(draw);
   }
 
   requestAnimationFrame(draw);
-});
+})();
 </script>
 </body>
 </html>
