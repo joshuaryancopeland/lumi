@@ -168,36 +168,42 @@
 <script>
 // ── VITALS SIMULATION ────────────────────────────────────────────────────────
 const INIT = { hr:69, spo2:98, sys:115, dia:78, rr:14 };
-const VAR  = { hrLo:60, hrHi:80, spo2Lo:96, spo2Hi:99, rrLo:13, rrHi:17 };
 
 let vitals  = { ...INIT };
-let targets = { hr:72, spo2:97, sys:118, dia:76, rr:15 }; // start with different targets so movement is immediate
+let targets = { hr:72, spo2:96, sys:118, dia:76, rr:16 };
 let bpm = INIT.hr;
 
 const ri   = (lo,hi) => Math.floor(Math.random()*(hi-lo+1))+lo;
+const rif  = (lo,hi) => Math.random()*(hi-lo)+lo;       // float version
 const lerp = (a,b,t) => a+(b-a)*t;
 const cl   = (v,lo,hi) => Math.max(lo,Math.min(hi,v));
 
-function newTargets() {
-  targets.hr   = ri(VAR.hrLo,  VAR.hrHi);
-  targets.spo2 = ri(VAR.spo2Lo, VAR.spo2Hi);
-  targets.rr   = ri(VAR.rrLo,  VAR.rrHi);
-  setTimeout(newTargets, ri(4000,9000));
-}
-setTimeout(newTargets, ri(3000,7000));
+// HR: drifts slowly, every 5–10s
+(function hrTimer() { targets.hr = ri(60,80); setTimeout(hrTimer, ri(5000,10000)); })();
 
+// SpO2: jumps frequently in a wide range, every 2–4s
+(function spo2Timer() { targets.spo2 = ri(92,100); setTimeout(spo2Timer, ri(2000,4000)); })();
+
+// RR: also jumps frequently, every 2–5s
+(function rrTimer() { targets.rr = ri(10,22); setTimeout(rrTimer, ri(2000,5000)); })();
+
+// BP: only retargets every 60s
 setInterval(() => {
-  targets.sys = cl(INIT.sys + ri(-12,12), 80,160);
-  targets.dia = cl(INIT.dia + ri(-8,8),   50,100);
+  targets.sys = cl(INIT.sys + ri(-14,14), 80,170);
+  targets.dia = cl(INIT.dia + ri(-9,9),   50,105);
 }, 60000);
 
+// Tick: lerp toward targets; SpO2 and RR get extra per-tick noise
 setInterval(() => {
-  vitals.hr   = Math.round(cl(lerp(vitals.hr,   targets.hr,   0.2), 40,180));
-  vitals.spo2 = Math.round(cl(lerp(vitals.spo2, targets.spo2, 0.25),85,100));
-  vitals.sys  = Math.round(cl(lerp(vitals.sys,  targets.sys,  0.1), 80,180));
-  vitals.dia  = Math.round(cl(lerp(vitals.dia,  targets.dia,  0.1), 50,110));
-  vitals.rr   = Math.round(cl(lerp(vitals.rr,   targets.rr,   0.18),8,30));
-  bpm = vitals.hr;
+  vitals.hr   = Math.round(cl(lerp(vitals.hr,   targets.hr,   0.20), 40, 180));
+  // SpO2: fast lerp + ±1 noise so it visibly flickers
+  vitals.spo2 = Math.round(cl(lerp(vitals.spo2, targets.spo2, 0.40) + rif(-0.8, 0.8), 85, 100));
+  // BP: slow lerp — only target changes every 60s
+  vitals.sys  = Math.round(cl(lerp(vitals.sys,  targets.sys,  0.06), 80, 180));
+  vitals.dia  = Math.round(cl(lerp(vitals.dia,  targets.dia,  0.06), 50, 110));
+  // RR: fast lerp + ±1 noise
+  vitals.rr   = Math.round(cl(lerp(vitals.rr,   targets.rr,   0.35) + rif(-1.0, 1.0), 8, 30));
+  bpm = vitals.hr;   // ECG speed tracks HR directly
   renderUI();
 }, 800);
 
@@ -205,7 +211,7 @@ setInterval(() => {
 const OK='#16a34a', WARN='#ea580c', CRIT='#dc2626';
 function trend(key,v) {
   if (key==='hr')   { if(v.hr<50) return[`↓ Severe bradycardia`,CRIT]; if(v.hr<60) return[`↓ Bradycardia`,WARN]; if(v.hr>130) return[`↑ Severe tachycardia`,CRIT]; if(v.hr>100) return[`↑ Tachycardia`,WARN]; return[`↑ Normal sinus`,OK]; }
-  if (key==='spo2') { if(v.spo2>=98) return[`→ Stable`,OK]; if(v.spo2>=95) return[`↓ Adequate`,OK]; if(v.spo2>=90) return[`↓ Low — monitor`,WARN]; return[`↓ Critical hypoxia`,CRIT]; }
+  if (key==='spo2') { if(v.spo2>=97) return[`→ Stable`,OK]; if(v.spo2>=95) return[`↓ Adequate`,WARN]; if(v.spo2>=90) return[`↓ Low — monitor`,WARN]; return[`↓ Critical hypoxia`,CRIT]; }
   if (key==='bp')   { const m=Math.round((v.sys+2*v.dia)/3); if(m<65) return[`↓ MAP ${m} — shock`,CRIT]; if(v.sys>180) return[`↑ Hypertensive crisis`,CRIT]; if(v.sys>140) return[`↑ Elevated · MAP ${m}`,WARN]; return[`↓ MAP ${m}`,OK]; }
   if (key==='rr')   { if(v.rr<10) return[`↓ Bradypnea`,WARN]; if(v.rr>24) return[`↑ Tachypnea`,WARN]; return[`→ Normal`,OK]; }
   return ['',OK];
