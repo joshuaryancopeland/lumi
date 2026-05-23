@@ -247,7 +247,7 @@ renderUI(); // paint initial values + trend colors immediately
   }
   function para(t,t0,dur,a) {
     if (dur<=0||t<t0||t>t0+dur) return 0;
-    const h=dur*0.5; return (-(t-(t0+h))**2+h*h)*(a/(h*h));
+    const h=dur*0.5, d=t-(t0+h); return (-d*d+h*h)*(a/(h*h));
   }
   function ecgAt(nT) {
     const T=60/bpm, sq=Math.sqrt(T);
