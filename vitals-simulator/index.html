@@ -2,47 +2,58 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=600, initial-scale=1.0">
-<title>B.E.A.C.O.N. Vitals — Meta Glasses Display</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>B.E.A.C.O.N. Vitals Simulator</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
   :root {
-    --navy: #0B2545;
-    --navy2: #1B3A6B;
-    --blue: #2563EB;
-    --blue-lt: #60A5FA;
-    --gold: #D4901A;
-    --green: #22C55E;
-    --green-lt: #4ade80;
-    --amber: #f59e0b;
-    --red: #ef4444;
-    --glass-bg: rgba(4,12,32,0.62);
-    --glass-border: rgba(255,255,255,0.10);
-    --glass-inset: rgba(255,255,255,0.07);
-    --card-bg: rgba(255,255,255,0.06);
-    --card-border: rgba(255,255,255,0.11);
-    --text-hi: rgba(215,235,255,0.96);
-    --text-mid: rgba(160,200,240,0.70);
-    --text-lo: rgba(120,160,210,0.45);
+    --navy:        #0B2545;
+    --navy2:       #1B3A6B;
+    --blue:        #2563EB;
+    --blue-lt:     #60A5FA;
+    --muted:       #5B7BA0;
+    --green:       #16a34a;
+    --green-lt:    #22C55E;
+    --amber:       #ea580c;
+    --red:         #ef4444;
+    --glass-bg:    rgba(255,255,255,0.28);
+    --glass-border:rgba(255,255,255,0.72);
+    --glass-shadow:0 2px 0 rgba(255,255,255,0.88) inset,
+                   0 -1px 0 rgba(160,200,255,0.18) inset,
+                   0 12px 48px rgba(30,90,200,0.10),
+                   0 2px 10px rgba(30,90,200,0.07);
+    --card-bg:     rgba(255,255,255,0.48);
+    --card-border: rgba(255,255,255,0.72);
+    --card-shadow: 0 1px 0 rgba(255,255,255,0.85) inset;
     --mono: 'DM Mono', monospace;
     --sans: 'Inter', system-ui, sans-serif;
   }
 
   html, body {
-    width: 600px;
-    height: 600px;
-    overflow: hidden;
-    background: #020810;
+    width: 100%;
+    min-height: 100%;
     font-family: var(--sans);
+    color: var(--navy);
+    overflow-x: hidden;
   }
 
-  /* ── BACKGROUND ── */
+  /* ── PAGE BACKGROUND ── */
+  body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    background: linear-gradient(160deg, #ddeeff 0%, #eaf3ff 40%, #f4f9ff 100%);
+    position: relative;
+  }
+
+  /* background orbs */
   #bg {
     position: fixed;
-    inset: 0;
+    inset: -20%;
     z-index: 0;
     pointer-events: none;
     overflow: hidden;
@@ -50,446 +61,143 @@
   .orb {
     position: absolute;
     border-radius: 50%;
-    filter: blur(80px);
-    opacity: 0.28;
-    animation: drift 18s ease-in-out infinite alternate;
+    filter: blur(90px);
+    animation: drift 20s ease-in-out infinite alternate;
   }
-  .orb1 { width: 340px; height: 340px; background: #1a3a8f; top: -80px; left: -60px; animation-duration: 20s; }
-  .orb2 { width: 260px; height: 260px; background: #0d2b5c; bottom: -60px; right: -40px; animation-duration: 16s; animation-delay: -7s; }
-  .orb3 { width: 180px; height: 180px; background: #0e4060; top: 160px; right: 20px; animation-duration: 22s; animation-delay: -3s; }
-  .orb4 { width: 120px; height: 120px; background: #1d5a8a; bottom: 80px; left: 80px; animation-duration: 14s; animation-delay: -11s; opacity: 0.18; }
+  .orb1 { width: 500px; height: 500px; background: rgba(191,219,254,0.55); top: -10%; left: -10%; animation-duration: 22s; }
+  .orb2 { width: 380px; height: 380px; background: rgba(219,234,254,0.50); bottom: 5%; right: 0%; animation-duration: 18s; animation-delay: -8s; }
+  .orb3 { width: 260px; height: 260px; background: rgba(147,197,253,0.30); top: 40%; right: 10%; animation-duration: 26s; animation-delay: -4s; }
   @keyframes drift {
-    0%   { transform: translate(0, 0) scale(1); }
-    50%  { transform: translate(18px, -14px) scale(1.06); }
-    100% { transform: translate(-10px, 20px) scale(0.96); }
-  }
-  .scanline {
-    position: absolute;
-    inset: 0;
-    background: repeating-linear-gradient(
-      0deg,
-      transparent 0px,
-      transparent 3px,
-      rgba(0,0,0,0.04) 3px,
-      rgba(0,0,0,0.04) 4px
-    );
-    pointer-events: none;
+    0%   { transform: translate(0,0) scale(1); }
+    50%  { transform: translate(20px,-15px) scale(1.05); }
+    100% { transform: translate(-12px, 22px) scale(0.97); }
   }
 
-  /* ── GLASS PANEL ── */
+  /* ── SIMULATOR PANEL ── */
   #panel {
     position: relative;
     z-index: 2;
-    width: 600px;
-    height: 600px;
-    display: flex;
-    flex-direction: column;
-    padding: 14px 16px 12px;
+    width: 560px;
+    padding: 24px 26px 22px;
     background: var(--glass-bg);
-    backdrop-filter: blur(32px) saturate(160%) brightness(0.72);
-    -webkit-backdrop-filter: blur(32px) saturate(160%) brightness(0.72);
+    backdrop-filter: blur(28px) saturate(180%) brightness(1.06);
+    -webkit-backdrop-filter: blur(28px) saturate(180%) brightness(1.06);
     border: 1px solid var(--glass-border);
-    overflow: hidden;
+    box-shadow: var(--glass-shadow);
+    border-radius: 20px;
   }
   #panel::before {
     content: '';
     position: absolute;
     inset: 0;
-    background: radial-gradient(ellipse 400px 160px at 50% -20px, rgba(255,255,255,0.055), transparent 60%);
+    border-radius: inherit;
+    background: radial-gradient(ellipse 300px 80px at 50% -10px, rgba(255,255,255,0.55), transparent 60%);
     pointer-events: none;
   }
 
   /* corner brackets */
-  .corner { position: absolute; width: 18px; height: 18px; border-color: rgba(255,255,255,0.2); border-style: solid; }
-  .corner.tl { top: 8px;  left: 8px;  border-width: 1.5px 0 0 1.5px; }
-  .corner.tr { top: 8px;  right: 8px; border-width: 1.5px 1.5px 0 0; }
-  .corner.bl { bottom: 8px; left: 8px;  border-width: 0 0 1.5px 1.5px; }
-  .corner.br { bottom: 8px; right: 8px; border-width: 0 1.5px 1.5px 0; }
+  .corner {
+    position: absolute;
+    width: 18px;
+    height: 18px;
+    border-color: rgba(37,99,235,0.28);
+    border-style: solid;
+  }
+  .corner.tl { top: 10px;    left: 10px;  border-width: 2px 0 0 2px; }
+  .corner.tr { top: 10px;    right: 10px; border-width: 2px 2px 0 0; }
+  .corner.bl { bottom: 10px; left: 10px;  border-width: 0 0 2px 2px; }
+  .corner.br { bottom: 10px; right: 10px; border-width: 0 2px 2px 0; }
 
   /* ── HEADER ── */
-  #header {
+  #live-row {
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    margin-bottom: 10px;
-    flex-shrink: 0;
-  }
-  .live-row {
-    display: flex;
-    align-items: center;
-    gap: 6px;
+    gap: 8px;
+    margin-bottom: 18px;
   }
   .pulse-dot {
-    width: 7px; height: 7px;
+    width: 9px; height: 9px;
     border-radius: 50%;
-    background: var(--green);
-    box-shadow: 0 0 8px var(--green), 0 0 16px rgba(34,197,94,0.4);
+    background: var(--green-lt);
+    box-shadow: 0 0 8px var(--green-lt), 0 0 16px rgba(34,197,94,0.35);
     flex-shrink: 0;
     animation: pulse 1.8s ease-in-out infinite;
   }
   @keyframes pulse {
-    0%, 100% { opacity: 1; transform: scale(1); box-shadow: 0 0 8px var(--green), 0 0 16px rgba(34,197,94,0.4); }
-    50%       { opacity: 0.55; transform: scale(0.82); box-shadow: 0 0 4px var(--green); }
-  }
-  .brand {
-    font-size: 0.62rem;
-    letter-spacing: 0.22em;
-    color: rgba(160,210,255,0.65);
-    font-weight: 700;
-    text-transform: uppercase;
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50%       { opacity: 0.5; transform: scale(0.82); }
   }
   .live-label {
-    font-size: 0.55rem;
-    letter-spacing: 0.16em;
-    color: var(--green-lt);
+    font-size: 0.62rem;
+    letter-spacing: 0.18em;
+    color: var(--green);
     font-weight: 700;
-  }
-  #patient-nav {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-  .nav-arrow {
-    font-size: 0.7rem;
-    color: var(--text-mid);
-    cursor: pointer;
-    padding: 2px 5px;
-    border-radius: 4px;
-    border: 1px solid rgba(255,255,255,0.08);
-    background: rgba(255,255,255,0.04);
-    transition: all 0.15s;
-    user-select: none;
-  }
-  .nav-arrow:hover { background: rgba(255,255,255,0.10); color: var(--text-hi); }
-  .patient-idx {
-    font-size: 0.55rem;
-    color: var(--text-lo);
-    letter-spacing: 0.1em;
-    font-family: var(--mono);
-  }
-
-  /* ── PATIENT INFO ── */
-  #patient-bar {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 8px 10px;
-    background: var(--card-bg);
-    border: 1px solid var(--card-border);
-    border-radius: 8px;
-    margin-bottom: 10px;
-    flex-shrink: 0;
-  }
-  .patient-name {
-    font-size: 0.85rem;
-    font-weight: 700;
-    color: var(--text-hi);
-    letter-spacing: 0.02em;
-  }
-  .patient-meta {
-    font-size: 0.55rem;
-    color: var(--text-mid);
-    margin-top: 2px;
-    letter-spacing: 0.05em;
-  }
-  .status-badge {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    padding: 3px 9px;
-    border-radius: 20px;
-    font-size: 0.55rem;
-    font-weight: 700;
-    letter-spacing: 0.12em;
-  }
-  .status-dot {
-    width: 5px; height: 5px;
-    border-radius: 50%;
+    text-transform: uppercase;
   }
 
   /* ── VITALS GRID ── */
   #vitals-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    grid-template-rows: 1fr 1fr;
-    gap: 8px;
-    flex: 1;
-    margin-bottom: 10px;
-    min-height: 0;
+    gap: 10px;
+    margin-bottom: 14px;
   }
-  .vital-card {
+  .v-card {
     background: var(--card-bg);
     border: 1px solid var(--card-border);
-    border-radius: 9px;
-    padding: 10px 12px;
+    box-shadow: var(--card-shadow);
+    border-radius: 12px;
+    padding: 14px 16px 12px;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
-    position: relative;
-    overflow: hidden;
-    transition: border-color 0.3s, box-shadow 0.3s;
+    gap: 2px;
   }
-  .vital-card::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    border-radius: inherit;
-    background: radial-gradient(ellipse 100px 40px at 50% -5px, rgba(255,255,255,0.05), transparent 60%);
-    pointer-events: none;
-  }
-  .vital-card.alert-card {
-    border-color: rgba(239,68,68,0.35);
-    box-shadow: 0 0 16px rgba(239,68,68,0.12);
-    animation: alertPulse 2.5s ease-in-out infinite;
-  }
-  @keyframes alertPulse {
-    0%, 100% { box-shadow: 0 0 16px rgba(239,68,68,0.12); }
-    50%       { box-shadow: 0 0 28px rgba(239,68,68,0.28); }
-  }
-  .vcard-label {
-    font-size: 0.5rem;
-    letter-spacing: 0.12em;
-    color: rgba(160,210,255,0.60);
-    font-weight: 600;
+  .v-label {
+    font-size: 0.62rem;
+    letter-spacing: 0.10em;
+    color: var(--blue);
+    font-weight: 700;
     text-transform: uppercase;
     margin-bottom: 4px;
   }
-  .vcard-val {
+  .v-val-row {
+    display: flex;
+    align-items: baseline;
+    gap: 4px;
+    line-height: 1;
+  }
+  .v-val {
     font-family: var(--mono);
-    font-size: 1.55rem;
-    font-weight: 500;
-    color: var(--text-hi);
+    font-size: 3rem;
+    font-weight: 400;
+    color: var(--navy);
     line-height: 1;
     letter-spacing: -0.02em;
   }
-  .vcard-unit {
-    font-size: 0.55rem;
-    color: var(--text-mid);
-    margin-left: 3px;
-    font-family: var(--sans);
+  .v-unit {
+    font-size: 0.9rem;
+    color: var(--muted);
     font-weight: 400;
   }
-  .vcard-trend {
-    font-size: 0.5rem;
-    margin-top: 4px;
-    letter-spacing: 0.04em;
-    font-weight: 500;
-  }
-  .vcard-bar {
-    height: 2px;
-    border-radius: 1px;
-    background: rgba(255,255,255,0.06);
+  .v-trend {
+    font-size: 0.72rem;
     margin-top: 6px;
-    overflow: hidden;
-  }
-  .vcard-bar-fill {
-    height: 100%;
-    border-radius: 1px;
-    transition: width 1s ease;
-    background: linear-gradient(90deg, rgba(37,99,235,0.5), rgba(96,165,250,0.8));
+    font-weight: 500;
+    letter-spacing: 0.01em;
   }
 
   /* ── ECG ── */
-  #ecg-section {
-    flex-shrink: 0;
-    height: 80px;
-    position: relative;
-  }
-  #ecg-header {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    margin-bottom: 4px;
-  }
-  .ecg-label {
-    font-size: 0.48rem;
-    letter-spacing: 0.16em;
-    color: var(--text-lo);
-    font-weight: 700;
-    text-transform: uppercase;
+  #ecg-wrap {
+    border-radius: 10px;
+    overflow: hidden;
+    background: rgba(255,255,255,0.55);
+    border: 1px solid rgba(255,255,255,0.72);
+    box-shadow: 0 1px 0 rgba(255,255,255,0.85) inset;
   }
   #ecg-canvas {
-    width: 100%;
-    height: 60px;
     display: block;
-    border-radius: 6px;
-    background: rgba(0,0,0,0.18);
-  }
-
-  /* ── FOOTER ── */
-  #footer {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-top: 8px;
-    flex-shrink: 0;
-  }
-  .footer-hint {
-    font-size: 0.44rem;
-    color: var(--text-lo);
-    letter-spacing: 0.08em;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-  }
-  .key-chip {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding: 1px 5px;
-    border-radius: 3px;
-    background: rgba(255,255,255,0.06);
-    border: 1px solid rgba(255,255,255,0.10);
-    font-family: var(--mono);
-    font-size: 0.44rem;
-    color: var(--text-mid);
-  }
-  .timestamp {
-    font-size: 0.48rem;
-    color: var(--text-lo);
-    font-family: var(--mono);
-    letter-spacing: 0.06em;
-  }
-
-  /* ── VIEW TRANSITION ── */
-  .view-fade {
-    animation: fadeIn 0.3s ease;
-  }
-  @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(4px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
-
-  /* ── FOCUS VIEW ── */
-  #focus-view {
-    display: none;
-    flex: 1;
-    flex-direction: column;
-    gap: 8px;
-    min-height: 0;
-  }
-  .focus-main {
-    flex: 1;
-    background: var(--card-bg);
-    border: 1px solid var(--card-border);
-    border-radius: 9px;
-    padding: 20px 24px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    position: relative;
-    overflow: hidden;
-  }
-  .focus-main::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: radial-gradient(ellipse 300px 120px at 50% -10px, rgba(37,99,235,0.07), transparent 60%);
-    pointer-events: none;
-  }
-  .focus-val {
-    font-family: var(--mono);
-    font-size: 5rem;
-    font-weight: 300;
-    color: var(--text-hi);
-    line-height: 1;
-    letter-spacing: -0.04em;
-  }
-  .focus-unit {
-    font-size: 1.1rem;
-    color: var(--text-mid);
-    margin-left: 8px;
-  }
-  .focus-label {
-    font-size: 0.6rem;
-    letter-spacing: 0.2em;
-    color: rgba(160,210,255,0.55);
-    font-weight: 700;
-    text-transform: uppercase;
-    margin-bottom: 8px;
-  }
-  .focus-trend {
-    font-size: 0.65rem;
-    margin-top: 10px;
-    font-weight: 600;
-  }
-  .focus-mini-row {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 6px;
-  }
-  .focus-mini {
-    background: var(--card-bg);
-    border: 1px solid var(--card-border);
-    border-radius: 7px;
-    padding: 7px 10px;
-  }
-  .focus-mini-label {
-    font-size: 0.44rem;
-    letter-spacing: 0.1em;
-    color: rgba(160,210,255,0.50);
-    font-weight: 600;
-    text-transform: uppercase;
-    margin-bottom: 2px;
-  }
-  .focus-mini-val {
-    font-family: var(--mono);
-    font-size: 0.9rem;
-    color: var(--text-hi);
-    line-height: 1;
-  }
-  .focus-mini-unit {
-    font-size: 0.4rem;
-    color: var(--text-mid);
-    margin-left: 2px;
-  }
-
-  /* ── DEVICE STATUS ── */
-  #device-row {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 5px 8px;
-    background: rgba(0,0,0,0.2);
-    border-radius: 6px;
-    border: 1px solid rgba(255,255,255,0.06);
-    flex-shrink: 0;
-    margin-bottom: 8px;
-  }
-  .device-icon {
-    font-size: 0.9rem;
-    line-height: 1;
-  }
-  .device-info {
-    flex: 1;
-  }
-  .device-name {
-    font-size: 0.55rem;
-    font-weight: 700;
-    color: var(--text-hi);
-    letter-spacing: 0.04em;
-  }
-  .device-sub {
-    font-size: 0.44rem;
-    color: var(--text-mid);
-    letter-spacing: 0.04em;
-    margin-top: 1px;
-  }
-  .device-live {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    font-size: 0.48rem;
-    font-weight: 700;
-    color: var(--green-lt);
-    letter-spacing: 0.12em;
-  }
-  .device-live-dot {
-    width: 5px; height: 5px;
-    border-radius: 50%;
-    background: var(--green);
-    box-shadow: 0 0 6px var(--green);
-    animation: pulse 1.8s ease-in-out infinite;
+    width: 100%;
+    height: 90px;
   }
 </style>
 </head>
@@ -499,8 +207,6 @@
   <div class="orb orb1"></div>
   <div class="orb orb2"></div>
   <div class="orb orb3"></div>
-  <div class="orb orb4"></div>
-  <div class="scanline"></div>
 </div>
 
 <div id="panel">
@@ -510,360 +216,161 @@
   <div class="corner br"></div>
 
   <!-- HEADER -->
-  <div id="header">
-    <div class="live-row">
-      <div class="pulse-dot"></div>
-      <span class="brand">B·E·A·C·O·N</span>
-      <span class="live-label">· LIVE</span>
-    </div>
-    <div id="patient-nav">
-      <div class="nav-arrow" id="btn-prev">◀</div>
-      <span class="patient-idx" id="patient-idx">1 / 3</span>
-      <div class="nav-arrow" id="btn-next">▶</div>
-    </div>
+  <div id="live-row">
+    <div class="pulse-dot"></div>
+    <span class="live-label">Live &middot; AR Overlay Active</span>
   </div>
 
-  <!-- DEVICE ROW -->
-  <div id="device-row">
-    <span class="device-icon">🕶️</span>
-    <div class="device-info">
-      <div class="device-name">Meta Ray-Ban Smart Glasses</div>
-      <div class="device-sub">Connected · Battery 84% · Streaming vitals</div>
-    </div>
-    <div class="device-live">
-      <div class="device-live-dot"></div>
-      STREAM
-    </div>
-  </div>
-
-  <!-- PATIENT BAR -->
-  <div id="patient-bar">
-    <div>
-      <div class="patient-name" id="patient-name">Sarah Chen</div>
-      <div class="patient-meta" id="patient-meta">42 yr · MRN 00124 · Cardiology ICU</div>
-    </div>
-    <div class="status-badge" id="status-badge">
-      <div class="status-dot" id="status-dot"></div>
-      <span id="status-label">STABLE</span>
-    </div>
-  </div>
-
-  <!-- VITALS GRID (normal view) -->
+  <!-- VITALS GRID -->
   <div id="vitals-grid">
-    <div class="vital-card" id="card-hr">
-      <div>
-        <div class="vcard-label">Heart Rate</div>
-        <div>
-          <span class="vcard-val" id="val-hr">72</span>
-          <span class="vcard-unit">bpm</span>
-        </div>
+    <div class="v-card">
+      <div class="v-label">Heart Rate</div>
+      <div class="v-val-row">
+        <span class="v-val" id="val-hr">69</span>
+        <span class="v-unit">bpm</span>
       </div>
-      <div>
-        <div class="vcard-trend" id="trend-hr"></div>
-        <div class="vcard-bar"><div class="vcard-bar-fill" id="bar-hr" style="width:60%"></div></div>
-      </div>
+      <div class="v-trend" id="trend-hr">↑ Normal sinus</div>
     </div>
 
-    <div class="vital-card" id="card-spo2">
-      <div>
-        <div class="vcard-label">SpO₂</div>
-        <div>
-          <span class="vcard-val" id="val-spo2">98</span>
-          <span class="vcard-unit">%</span>
-        </div>
+    <div class="v-card">
+      <div class="v-label">SpO₂</div>
+      <div class="v-val-row">
+        <span class="v-val" id="val-spo2">98</span>
+        <span class="v-unit">%</span>
       </div>
-      <div>
-        <div class="vcard-trend" id="trend-spo2"></div>
-        <div class="vcard-bar"><div class="vcard-bar-fill" id="bar-spo2" style="width:98%"></div></div>
-      </div>
+      <div class="v-trend" id="trend-spo2">→ Stable</div>
     </div>
 
-    <div class="vital-card" id="card-bp">
-      <div>
-        <div class="vcard-label">Blood Pressure</div>
-        <div>
-          <span class="vcard-val" id="val-bp">118</span>
-          <span class="vcard-unit" id="unit-bp">/74 mmHg</span>
-        </div>
+    <div class="v-card">
+      <div class="v-label">Blood Pressure</div>
+      <div class="v-val-row">
+        <span class="v-val" id="val-bp">115</span>
+        <span class="v-unit" id="unit-bp">/78</span>
       </div>
-      <div>
-        <div class="vcard-trend" id="trend-bp"></div>
-        <div class="vcard-bar"><div class="vcard-bar-fill" id="bar-bp" style="width:55%"></div></div>
-      </div>
+      <div class="v-trend" id="trend-bp">↓ MAP 90</div>
     </div>
 
-    <div class="vital-card" id="card-rr">
-      <div>
-        <div class="vcard-label">Resp Rate</div>
-        <div>
-          <span class="vcard-val" id="val-rr">16</span>
-          <span class="vcard-unit">/min</span>
-        </div>
+    <div class="v-card">
+      <div class="v-label">Resp Rate</div>
+      <div class="v-val-row">
+        <span class="v-val" id="val-rr">14</span>
+        <span class="v-unit">/min</span>
       </div>
-      <div>
-        <div class="vcard-trend" id="trend-rr"></div>
-        <div class="vcard-bar"><div class="vcard-bar-fill" id="bar-rr" style="width:50%"></div></div>
-      </div>
-    </div>
-  </div>
-
-  <!-- FOCUS VIEW (hidden by default) -->
-  <div id="focus-view">
-    <div class="focus-main">
-      <div class="focus-label" id="focus-label">Heart Rate</div>
-      <div>
-        <span class="focus-val" id="focus-val">72</span>
-        <span class="focus-unit" id="focus-unit">bpm</span>
-      </div>
-      <div class="focus-trend" id="focus-trend"></div>
-    </div>
-    <div class="focus-mini-row">
-      <div class="focus-mini">
-        <div class="focus-mini-label">SpO₂</div>
-        <div><span class="focus-mini-val" id="mini-spo2">98</span><span class="focus-mini-unit">%</span></div>
-      </div>
-      <div class="focus-mini">
-        <div class="focus-mini-label">BP</div>
-        <div><span class="focus-mini-val" id="mini-bp">118/74</span><span class="focus-mini-unit">mmHg</span></div>
-      </div>
-      <div class="focus-mini">
-        <div class="focus-mini-label">Resp</div>
-        <div><span class="focus-mini-val" id="mini-rr">16</span><span class="focus-mini-unit">/min</span></div>
-      </div>
+      <div class="v-trend" id="trend-rr">→ Normal</div>
     </div>
   </div>
 
   <!-- ECG -->
-  <div id="ecg-section">
-    <div id="ecg-header">
-      <span class="ecg-label">ECG · Lead II</span>
-    </div>
+  <div id="ecg-wrap">
     <canvas id="ecg-canvas"></canvas>
-  </div>
-
-  <!-- FOOTER -->
-  <div id="footer">
-    <div class="footer-hint">
-      <span class="key-chip">◀ ▶</span> patients &nbsp;
-      <span class="key-chip">↑ ↓</span> view &nbsp;
-    </div>
-    <div class="timestamp" id="timestamp">--:--:--</div>
   </div>
 </div>
 
 <script>
-// ── PATIENTS ──────────────────────────────────────────────────────────────────
-const PATIENTS = [
-  {
-    name: "Sarah Chen",
-    meta: "42 yr · MRN 00124 · Cardiology ICU",
-    status: "stable",
-    vitals: { hr: 72, spo2: 98, sys: 118, dia: 74, rr: 16 },
-    variance: { hrLo: 65, hrHi: 78, spo2Lo: 97, spo2Hi: 99, rrLo: 14, rrHi: 17 },
-  },
-  {
-    name: "Marcus Williams",
-    meta: "58 yr · MRN 00291 · Cardiac Step-Down",
-    status: "monitoring",
-    vitals: { hr: 94, spo2: 95, sys: 148, dia: 92, rr: 20 },
-    variance: { hrLo: 88, hrHi: 106, spo2Lo: 93, spo2Hi: 96, rrLo: 18, rrHi: 24 },
-  },
-  {
-    name: "Elena Rodriguez",
-    meta: "31 yr · MRN 00388 · Medical ICU",
-    status: "critical",
-    vitals: { hr: 118, spo2: 88, sys: 84, dia: 52, rr: 28 },
-    variance: { hrLo: 110, hrHi: 128, spo2Lo: 85, spo2Hi: 90, rrLo: 26, rrHi: 32 },
-  },
-];
+// ── SIMULATION ──────────────────────────────────────────────────────────────
+const INIT = { hr: 69, spo2: 98, sys: 115, dia: 78, rr: 14 };
+const VARIANCE = { hrLo: 60, hrHi: 80, spo2Lo: 96, spo2Hi: 99, rrLo: 13, rrHi: 17 };
+let vitals  = { ...INIT };
+let targets = { ...INIT };
+let bpmRef  = { current: INIT.hr };
 
-const STATUS_CONFIG = {
-  stable:     { color: "#22c55e", bg: "rgba(34,197,94,0.12)",   label: "STABLE"     },
-  monitoring: { color: "#f59e0b", bg: "rgba(245,158,11,0.12)",  label: "MONITORING" },
-  critical:   { color: "#ef4444", bg: "rgba(239,68,68,0.12)",   label: "CRITICAL"   },
-};
+function ri(lo, hi)            { return Math.floor(Math.random() * (hi - lo + 1)) + lo; }
+function lerp(a, b, t)         { return a + (b - a) * t; }
+function cl(v, lo, hi)         { return Math.max(lo, Math.min(hi, v)); }
 
-// ── STATE ─────────────────────────────────────────────────────────────────────
-let currentPatientIdx = 0;
-let currentView = "grid"; // "grid" | "focus"
-let focusKey = "hr";
-const FOCUS_KEYS = ["hr", "spo2", "bp", "rr"];
-let focusKeyIdx = 0;
+// schedule new drift targets every 4–9 s
+(function scheduleTargets() {
+  targets.hr   = ri(VARIANCE.hrLo, VARIANCE.hrHi);
+  targets.spo2 = ri(VARIANCE.spo2Lo, VARIANCE.spo2Hi);
+  targets.rr   = ri(VARIANCE.rrLo, VARIANCE.rrHi);
+  setTimeout(scheduleTargets, ri(4000, 9000));
+})();
 
-let vitals = { ...PATIENTS[0].vitals };
-let targets = { ...PATIENTS[0].vitals };
-let bpmRef = { current: PATIENTS[0].vitals.hr };
-let simTimers = [];
+// bp drifts slowly
+setInterval(() => {
+  targets.sys = cl(INIT.sys + ri(-12, 12), 80, 160);
+  targets.dia = cl(INIT.dia + ri(-8,   8), 50, 100);
+}, 60000);
 
-// ── SIMULATION ────────────────────────────────────────────────────────────────
-function ri(lo, hi) { return Math.floor(Math.random() * (hi - lo + 1)) + lo; }
-function lerp(a, b, t) { return a + (b - a) * t; }
-function cl(v, lo, hi) { return Math.max(lo, Math.min(hi, v)); }
+// tick every second
+setInterval(() => {
+  vitals.hr   = Math.round(cl(lerp(vitals.hr,   targets.hr,   0.18), 40, 180));
+  vitals.spo2 = Math.round(cl(lerp(vitals.spo2, targets.spo2, 0.25), 85, 100));
+  vitals.sys  = Math.round(cl(lerp(vitals.sys,  targets.sys,  0.10), 80, 180));
+  vitals.dia  = Math.round(cl(lerp(vitals.dia,  targets.dia,  0.10), 50, 110));
+  vitals.rr   = Math.round(cl(lerp(vitals.rr,   targets.rr,   0.15), 8,  30));
+  bpmRef.current = vitals.hr;
+  updateUI();
+}, 1000);
 
-function startSim(patient) {
-  simTimers.forEach(clearInterval);
-  simTimers.forEach(clearTimeout);
-  simTimers = [];
-  vitals = { ...patient.vitals };
-  targets = { ...patient.vitals };
-  bpmRef.current = patient.vitals.hr;
-  const v = patient.variance;
+// ── TRENDS ──────────────────────────────────────────────────────────────────
+const OK = "#16a34a", WARN = "#ea580c", CRIT = "#dc2626";
 
-  function scheduleTargets() {
-    targets.hr   = ri(v.hrLo, v.hrHi);
-    targets.spo2 = ri(v.spo2Lo, v.spo2Hi);
-    targets.rr   = ri(v.rrLo, v.rrHi);
-    simTimers.push(setTimeout(scheduleTargets, ri(4000, 9000)));
-  }
-  simTimers.push(setTimeout(scheduleTargets, ri(3000, 7000)));
-
-  simTimers.push(setInterval(() => {
-    targets.sys = cl(patient.vitals.sys + ri(-14, 14), 70, 200);
-    targets.dia = cl(patient.vitals.dia + ri(-9,   9), 40, 120);
-  }, 60000));
-
-  simTimers.push(setInterval(() => {
-    vitals.hr   = Math.round(cl(lerp(vitals.hr,   targets.hr,   0.18), 30,  210));
-    vitals.spo2 = Math.round(cl(lerp(vitals.spo2, targets.spo2, 0.25), 60,  100));
-    vitals.sys  = Math.round(cl(lerp(vitals.sys,  targets.sys,  0.10), 60,  200));
-    vitals.dia  = Math.round(cl(lerp(vitals.dia,  targets.dia,  0.10), 35,  125));
-    vitals.rr   = Math.round(cl(lerp(vitals.rr,   targets.rr,   0.15), 6,   40));
-    bpmRef.current = vitals.hr;
-    updateUI();
-  }, 1000));
-}
-
-// ── TREND LOGIC ───────────────────────────────────────────────────────────────
 function getTrend(key, v) {
-  const OK = "#4ade80", WARN = "#fb923c", CRIT = "#f87171";
   if (key === "hr") {
-    if (v.hr < 50)  return { text: "↓ Severe bradycardia",  color: CRIT };
-    if (v.hr < 60)  return { text: "↓ Bradycardia",         color: WARN };
-    if (v.hr > 130) return { text: "↑ Severe tachycardia",  color: CRIT };
-    if (v.hr > 100) return { text: "↑ Tachycardia",         color: WARN };
-    return { text: "↑ Normal sinus",  color: OK };
+    if (v.hr < 50)  return { text: "↓ Severe bradycardia", color: CRIT };
+    if (v.hr < 60)  return { text: "↓ Bradycardia",        color: WARN };
+    if (v.hr > 130) return { text: "↑ Severe tachycardia", color: CRIT };
+    if (v.hr > 100) return { text: "↑ Tachycardia",        color: WARN };
+    return { text: "↑ Normal sinus", color: OK };
   }
   if (key === "spo2") {
-    if (v.spo2 >= 98) return { text: "→ Stable",       color: OK   };
-    if (v.spo2 >= 95) return { text: "↓ Adequate",     color: OK   };
-    if (v.spo2 >= 90) return { text: "↓ Low — watch",  color: WARN };
-    return { text: "↓ Critical hypoxia",  color: CRIT };
+    if (v.spo2 >= 98) return { text: "→ Stable",          color: OK   };
+    if (v.spo2 >= 95) return { text: "↓ Adequate",        color: OK   };
+    if (v.spo2 >= 90) return { text: "↓ Low — monitor",   color: WARN };
+    return { text: "↓ Critical hypoxia", color: CRIT };
   }
   if (key === "bp") {
     const map = Math.round((v.sys + 2 * v.dia) / 3);
-    if (map < 65)   return { text: `↓ MAP ${map} — shock`, color: CRIT };
-    if (v.sys > 180) return { text: `↑ Hypertensive crisis`, color: CRIT };
-    if (v.sys > 140) return { text: `↑ Elevated · MAP ${map}`, color: WARN };
+    if (map < 65)    return { text: `↓ MAP ${map} — shock`,     color: CRIT };
+    if (v.sys > 180) return { text: "↑ Hypertensive crisis",    color: CRIT };
+    if (v.sys > 140) return { text: `↑ Elevated · MAP ${map}`,  color: WARN };
     return { text: `↓ MAP ${map}`, color: OK };
   }
   if (key === "rr") {
-    if (v.rr < 10) return { text: "↓ Bradypnea",   color: WARN };
-    if (v.rr > 25) return { text: "↑ Tachypnea",   color: WARN };
-    if (v.rr > 30) return { text: "↑ Severe",       color: CRIT };
-    return { text: "→ Normal",  color: OK };
+    if (v.rr < 10) return { text: "↓ Bradypnea",  color: WARN };
+    if (v.rr > 24) return { text: "↑ Tachypnea",  color: WARN };
+    if (v.rr > 30) return { text: "↑ Severe",      color: CRIT };
+    return { text: "→ Normal", color: OK };
   }
   return { text: "", color: OK };
 }
 
-function getBarWidth(key, v) {
-  if (key === "hr")   return Math.round(cl((v.hr - 30)  / 170 * 100, 5, 100));
-  if (key === "spo2") return v.spo2;
-  if (key === "bp")   return Math.round(cl((v.sys - 60) / 160 * 100, 5, 100));
-  if (key === "rr")   return Math.round(cl((v.rr - 6)   / 34  * 100, 5, 100));
-  return 50;
-}
-
-// ── UI UPDATE ─────────────────────────────────────────────────────────────────
+// ── UI ───────────────────────────────────────────────────────────────────────
 function updateUI() {
-  const t_hr   = getTrend("hr",   vitals);
-  const t_spo2 = getTrend("spo2", vitals);
-  const t_bp   = getTrend("bp",   vitals);
-  const t_rr   = getTrend("rr",   vitals);
+  document.getElementById("val-hr").textContent   = vitals.hr;
+  document.getElementById("val-spo2").textContent = vitals.spo2;
+  document.getElementById("val-bp").textContent   = vitals.sys;
+  document.getElementById("unit-bp").textContent  = `/${vitals.dia}`;
+  document.getElementById("val-rr").textContent   = vitals.rr;
 
-  // grid view
-  document.getElementById("val-hr").textContent    = vitals.hr;
-  document.getElementById("val-spo2").textContent  = vitals.spo2;
-  document.getElementById("val-bp").textContent    = vitals.sys;
-  document.getElementById("unit-bp").textContent   = `/${vitals.dia} mmHg`;
-  document.getElementById("val-rr").textContent    = vitals.rr;
-
-  document.getElementById("trend-hr").textContent   = t_hr.text;
-  document.getElementById("trend-hr").style.color   = t_hr.color;
-  document.getElementById("trend-spo2").textContent = t_spo2.text;
-  document.getElementById("trend-spo2").style.color = t_spo2.color;
-  document.getElementById("trend-bp").textContent   = t_bp.text;
-  document.getElementById("trend-bp").style.color   = t_bp.color;
-  document.getElementById("trend-rr").textContent   = t_rr.text;
-  document.getElementById("trend-rr").style.color   = t_rr.color;
-
-  document.getElementById("bar-hr").style.width   = getBarWidth("hr",   vitals) + "%";
-  document.getElementById("bar-spo2").style.width = getBarWidth("spo2", vitals) + "%";
-  document.getElementById("bar-bp").style.width   = getBarWidth("bp",   vitals) + "%";
-  document.getElementById("bar-rr").style.width   = getBarWidth("rr",   vitals) + "%";
-
-  // alert cards
-  const alerts = PATIENTS[currentPatientIdx].status === "critical";
-  const hrCard = document.getElementById("card-hr");
-  const spo2Card = document.getElementById("card-spo2");
-  hrCard.classList.toggle("alert-card",   alerts && t_hr.color   === "#f87171");
-  spo2Card.classList.toggle("alert-card", alerts && t_spo2.color === "#f87171");
-
-  // focus view
-  const focusData = {
-    hr:   { label: "Heart Rate",     val: String(vitals.hr),   unit: "bpm",    trend: t_hr   },
-    spo2: { label: "SpO₂",          val: String(vitals.spo2), unit: "%",      trend: t_spo2 },
-    bp:   { label: "Blood Pressure", val: `${vitals.sys}/${vitals.dia}`, unit: "mmHg", trend: t_bp },
-    rr:   { label: "Resp Rate",      val: String(vitals.rr),  unit: "/min",   trend: t_rr   },
-  };
-  const fd = focusData[focusKey];
-  document.getElementById("focus-label").textContent  = fd.label;
-  document.getElementById("focus-val").textContent    = fd.val;
-  document.getElementById("focus-unit").textContent   = fd.unit;
-  document.getElementById("focus-trend").textContent  = fd.trend.text;
-  document.getElementById("focus-trend").style.color  = fd.trend.color;
-
-  document.getElementById("mini-spo2").textContent = vitals.spo2;
-  document.getElementById("mini-bp").textContent   = `${vitals.sys}/${vitals.dia}`;
-  document.getElementById("mini-rr").textContent   = vitals.rr;
-
-  // clock
-  document.getElementById("timestamp").textContent = new Date().toLocaleTimeString("en-US", { hour12: false });
+  const keys = ["hr","spo2","bp","rr"];
+  for (const k of keys) {
+    const t = getTrend(k, vitals);
+    const el = document.getElementById(`trend-${k}`);
+    el.textContent  = t.text;
+    el.style.color  = t.color;
+  }
 }
+updateUI();
 
-function loadPatient(idx) {
-  const p = PATIENTS[idx];
-  const s = STATUS_CONFIG[p.status];
-
-  document.getElementById("patient-name").textContent   = p.name;
-  document.getElementById("patient-meta").textContent   = p.meta;
-  document.getElementById("status-label").textContent   = s.label;
-  document.getElementById("status-dot").style.background = s.color;
-  document.getElementById("status-dot").style.boxShadow  = `0 0 6px ${s.color}`;
-  const badge = document.getElementById("status-badge");
-  badge.style.background = s.bg;
-  badge.style.color = s.color;
-  document.getElementById("patient-idx").textContent = `${idx + 1} / ${PATIENTS.length}`;
-
-  startSim(p);
-  updateUI();
-}
-
-// ── ECG CANVAS ────────────────────────────────────────────────────────────────
+// ── ECG CANVAS ───────────────────────────────────────────────────────────────
 (function initECG() {
   const canvas = document.getElementById("ecg-canvas");
-  const dpr = window.devicePixelRatio || 1;
+  const dpr    = window.devicePixelRatio || 1;
 
   function resize() {
-    const W = canvas.parentElement.offsetWidth;
-    const H = 60;
+    const W = canvas.parentElement.clientWidth;
+    const H = 90;
     canvas.style.width  = W + "px";
     canvas.style.height = H + "px";
     canvas.width  = W * dpr;
     canvas.height = H * dpr;
   }
   resize();
-  window.addEventListener("resize", resize);
+  window.addEventListener("resize", () => { resize(); buf = null; });
 
+  // ECG waveform math (physiologically accurate P-QRS-T)
   function tri(t, t0, dur, a) {
     if (dur <= 0 || t < t0 || t > t0 + dur) return 0;
     const h = dur * 0.5;
@@ -885,27 +392,26 @@ function loadPatient(idx) {
     const td  = Math.max(0.01,  1.06*sqT - 0.51*T - 0.33);
     const t   = ((normT % 1) + 1) % 1 * T;
     const qS  = pd + pq, rS = qS + q, sS = rS + r, tS = qS + qrs + st;
-    let v = para(t, 0, pd, 0.24);
-    v -= tri(t, qS, q, 0.025);
-    v += tri(t, rS, r, 1.0);
-    v -= tri(t, sS, s, 0.25);
+    let v = para(t, 0,   pd, 0.24);
+    v -= tri(t,  qS,  q, 0.025);
+    v += tri(t,  rS,  r, 1.0);
+    v -= tri(t,  sS,  s, 0.25);
     v += para(t, tS, td, 0.35);
     return v;
   }
 
-  const BEAT_PX = 264;
+  const BEAT_PX = 280;
   let buf = null, head = 0, beatT = 0, prevTime = null;
 
   function frame(now) {
-    const W = Math.round(canvas.width / dpr);
-    const H = Math.round(canvas.height / dpr);
+    const W   = Math.round(canvas.width  / dpr);
+    const H   = Math.round(canvas.height / dpr);
     const ctx = canvas.getContext("2d");
 
     if (!buf || buf.length !== W) {
       buf = new Float32Array(W).fill(0);
       head = 0; beatT = 0;
     }
-
     ctx.resetTransform();
     ctx.scale(dpr, dpr);
 
@@ -920,92 +426,60 @@ function loadPatient(idx) {
     for (let i = 0; i < pxCount; i++) {
       buf[head] = ecgAt(beatT) * amp;
       beatT = (beatT + 1 / BEAT_PX) % 1;
-      head  = (head + 1) % W;
+      head  = (head  + 1) % W;
     }
 
-    // grid
-    const sb = BEAT_PX / 25, lb = BEAT_PX / 5;
+    // background
+    ctx.clearRect(0, 0, W, H);
+    ctx.fillStyle = "rgba(255,255,255,0)";
+    ctx.fillRect(0, 0, W, H);
+
+    // light blue grid — minor lines
+    const sb = BEAT_PX / 25;
     ctx.lineWidth = 0.5;
-    ctx.strokeStyle = "rgba(34,197,94,0.07)";
+    ctx.strokeStyle = "rgba(37,99,235,0.09)";
     ctx.beginPath();
     for (let x = 0; x <= W; x += sb) { ctx.moveTo(x, 0); ctx.lineTo(x, H); }
     for (let y = 0; y <= H; y += H / 8) { ctx.moveTo(0, y); ctx.lineTo(W, y); }
     ctx.stroke();
-    ctx.strokeStyle = "rgba(34,197,94,0.12)";
+
+    // major lines
+    const lb = BEAT_PX / 5;
+    ctx.lineWidth = 0.5;
+    ctx.strokeStyle = "rgba(37,99,235,0.17)";
     ctx.beginPath();
     for (let x = 0; x <= W; x += lb) { ctx.moveTo(x, 0); ctx.lineTo(x, H); }
     ctx.stroke();
 
-    // waveform glow
+    // waveform — subtle glow pass
     const p = new Path2D();
     for (let i = 0; i < W; i++) {
       const x = i, y = mid - buf[(head + i) % W];
       i === 0 ? p.moveTo(x, y) : p.lineTo(x, y);
     }
-    ctx.lineWidth = 3;
-    ctx.strokeStyle = "rgba(34,197,94,0.18)";
-    ctx.stroke(p);
-    ctx.lineWidth = 1.5;
-    ctx.strokeStyle = "#22c55e";
+    ctx.lineWidth = 4;
+    ctx.strokeStyle = "rgba(37,99,235,0.12)";
+    ctx.lineJoin = "round";
+    ctx.lineCap  = "round";
     ctx.stroke(p);
 
-    // scan head
+    // waveform — crisp blue line
+    ctx.lineWidth = 1.8;
+    ctx.strokeStyle = "#2563EB";
+    ctx.stroke(p);
+
+    // scan-head fade
     const hx = (head === 0 ? W - 1 : head - 1);
-    const grad = ctx.createLinearGradient(hx - 30, 0, hx + 6, 0);
-    grad.addColorStop(0, "rgba(0,0,0,0)");
-    grad.addColorStop(1, "rgba(0,8,18,0.82)");
+    const grad = ctx.createLinearGradient(hx - 28, 0, hx + 4, 0);
+    grad.addColorStop(0, "rgba(255,255,255,0)");
+    grad.addColorStop(1, "rgba(255,255,255,0.92)");
     ctx.fillStyle = grad;
-    ctx.fillRect(hx - 30, 0, 36, H);
+    ctx.fillRect(hx - 28, 0, 32, H);
 
     requestAnimationFrame(frame);
   }
   requestAnimationFrame(frame);
 })();
-
-// ── NAVIGATION ────────────────────────────────────────────────────────────────
-function prevPatient() {
-  currentPatientIdx = (currentPatientIdx - 1 + PATIENTS.length) % PATIENTS.length;
-  loadPatient(currentPatientIdx);
-}
-function nextPatient() {
-  currentPatientIdx = (currentPatientIdx + 1) % PATIENTS.length;
-  loadPatient(currentPatientIdx);
-}
-function toggleView() {
-  const grid  = document.getElementById("vitals-grid");
-  const focus = document.getElementById("focus-view");
-  if (currentView === "grid") {
-    currentView = "focus";
-    grid.style.display  = "none";
-    focus.style.display = "flex";
-    focus.classList.add("view-fade");
-  } else {
-    focusKeyIdx = (focusKeyIdx + 1) % FOCUS_KEYS.length;
-    focusKey    = FOCUS_KEYS[focusKeyIdx];
-    if (focusKey === "hr") {
-      currentView = "grid";
-      focus.style.display = "none";
-      grid.style.display  = "grid";
-      grid.classList.add("view-fade");
-    } else {
-      updateUI();
-      focus.classList.add("view-fade");
-    }
-  }
-}
-
-document.getElementById("btn-prev").addEventListener("click", prevPatient);
-document.getElementById("btn-next").addEventListener("click", nextPatient);
-
-document.addEventListener("keydown", (e) => {
-  if (e.key === "ArrowLeft")  { e.preventDefault(); prevPatient(); }
-  if (e.key === "ArrowRight") { e.preventDefault(); nextPatient(); }
-  if (e.key === "ArrowUp" || e.key === "ArrowDown") { e.preventDefault(); toggleView(); }
-});
-
-// ── INIT ──────────────────────────────────────────────────────────────────────
-loadPatient(0);
-setInterval(updateUI, 1000);
 </script>
 </body>
 </html>
