@@ -11,36 +11,21 @@
 
   :root {
     --navy:        #0B2545;
-    --navy2:       #1B3A6B;
     --blue:        #2563EB;
-    --blue-lt:     #60A5FA;
     --muted:       #5B7BA0;
     --green:       #16a34a;
     --green-lt:    #22C55E;
     --amber:       #ea580c;
-    --red:         #ef4444;
-    --glass-bg:    rgba(255,255,255,0.28);
-    --glass-border:rgba(255,255,255,0.72);
-    --glass-shadow:0 2px 0 rgba(255,255,255,0.88) inset,
-                   0 -1px 0 rgba(160,200,255,0.18) inset,
-                   0 12px 48px rgba(30,90,200,0.10),
-                   0 2px 10px rgba(30,90,200,0.07);
-    --card-bg:     rgba(255,255,255,0.48);
-    --card-border: rgba(255,255,255,0.72);
-    --card-shadow: 0 1px 0 rgba(255,255,255,0.85) inset;
-    --mono: 'DM Mono', monospace;
-    --sans: 'Inter', system-ui, sans-serif;
+    --red:         #dc2626;
   }
 
   html, body {
     width: 100%;
     min-height: 100%;
-    font-family: var(--sans);
+    font-family: 'Inter', system-ui, sans-serif;
     color: var(--navy);
-    overflow-x: hidden;
   }
 
-  /* ── PAGE BACKGROUND ── */
   body {
     display: flex;
     align-items: center;
@@ -51,154 +36,88 @@
   }
 
   /* background orbs */
-  #bg {
-    position: fixed;
-    inset: -20%;
-    z-index: 0;
-    pointer-events: none;
-    overflow: hidden;
-  }
-  .orb {
-    position: absolute;
-    border-radius: 50%;
-    filter: blur(90px);
-    animation: drift 20s ease-in-out infinite alternate;
-  }
+  #bg { position: fixed; inset: -20%; z-index: 0; pointer-events: none; overflow: hidden; }
+  .orb { position: absolute; border-radius: 50%; filter: blur(90px); animation: drift 20s ease-in-out infinite alternate; }
   .orb1 { width: 500px; height: 500px; background: rgba(191,219,254,0.55); top: -10%; left: -10%; animation-duration: 22s; }
   .orb2 { width: 380px; height: 380px; background: rgba(219,234,254,0.50); bottom: 5%; right: 0%; animation-duration: 18s; animation-delay: -8s; }
   .orb3 { width: 260px; height: 260px; background: rgba(147,197,253,0.30); top: 40%; right: 10%; animation-duration: 26s; animation-delay: -4s; }
   @keyframes drift {
     0%   { transform: translate(0,0) scale(1); }
     50%  { transform: translate(20px,-15px) scale(1.05); }
-    100% { transform: translate(-12px, 22px) scale(0.97); }
+    100% { transform: translate(-12px,22px) scale(0.97); }
   }
 
-  /* ── SIMULATOR PANEL ── */
+  /* panel */
   #panel {
     position: relative;
     z-index: 2;
     width: 560px;
     padding: 24px 26px 22px;
-    background: var(--glass-bg);
+    background: rgba(255,255,255,0.28);
     backdrop-filter: blur(28px) saturate(180%) brightness(1.06);
     -webkit-backdrop-filter: blur(28px) saturate(180%) brightness(1.06);
-    border: 1px solid var(--glass-border);
-    box-shadow: var(--glass-shadow);
+    border: 1px solid rgba(255,255,255,0.72);
+    box-shadow:
+      0 2px 0 rgba(255,255,255,0.88) inset,
+      0 -1px 0 rgba(160,200,255,0.18) inset,
+      0 12px 48px rgba(30,90,200,0.10),
+      0 2px 10px rgba(30,90,200,0.07);
     border-radius: 20px;
   }
   #panel::before {
     content: '';
-    position: absolute;
-    inset: 0;
-    border-radius: inherit;
+    position: absolute; inset: 0; border-radius: inherit;
     background: radial-gradient(ellipse 300px 80px at 50% -10px, rgba(255,255,255,0.55), transparent 60%);
     pointer-events: none;
   }
 
   /* corner brackets */
-  .corner {
-    position: absolute;
-    width: 18px;
-    height: 18px;
-    border-color: rgba(37,99,235,0.28);
-    border-style: solid;
-  }
-  .corner.tl { top: 10px;    left: 10px;  border-width: 2px 0 0 2px; }
-  .corner.tr { top: 10px;    right: 10px; border-width: 2px 2px 0 0; }
-  .corner.bl { bottom: 10px; left: 10px;  border-width: 0 0 2px 2px; }
-  .corner.br { bottom: 10px; right: 10px; border-width: 0 2px 2px 0; }
+  .corner { position: absolute; width: 18px; height: 18px; border-color: rgba(37,99,235,0.28); border-style: solid; }
+  .corner.tl { top:10px; left:10px;   border-width: 2px 0 0 2px; }
+  .corner.tr { top:10px; right:10px;  border-width: 2px 2px 0 0; }
+  .corner.bl { bottom:10px; left:10px;  border-width: 0 0 2px 2px; }
+  .corner.br { bottom:10px; right:10px; border-width: 0 2px 2px 0; }
 
-  /* ── HEADER ── */
-  #live-row {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-bottom: 18px;
-  }
+  /* header */
+  #live-row { display: flex; align-items: center; gap: 8px; margin-bottom: 18px; }
   .pulse-dot {
-    width: 9px; height: 9px;
-    border-radius: 50%;
+    width: 9px; height: 9px; border-radius: 50%;
     background: var(--green-lt);
     box-shadow: 0 0 8px var(--green-lt), 0 0 16px rgba(34,197,94,0.35);
     flex-shrink: 0;
     animation: pulse 1.8s ease-in-out infinite;
   }
   @keyframes pulse {
-    0%, 100% { opacity: 1; transform: scale(1); }
-    50%       { opacity: 0.5; transform: scale(0.82); }
+    0%,100% { opacity:1; transform:scale(1); }
+    50%      { opacity:0.5; transform:scale(0.82); }
   }
-  .live-label {
-    font-size: 0.62rem;
-    letter-spacing: 0.18em;
-    color: var(--green);
-    font-weight: 700;
-    text-transform: uppercase;
-  }
+  .live-label { font-size: 0.62rem; letter-spacing: 0.18em; color: var(--green); font-weight: 700; text-transform: uppercase; }
 
-  /* ── VITALS GRID ── */
-  #vitals-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-    margin-bottom: 14px;
-  }
+  /* vitals grid */
+  #vitals-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; }
   .v-card {
-    background: var(--card-bg);
-    border: 1px solid var(--card-border);
-    box-shadow: var(--card-shadow);
+    background: rgba(255,255,255,0.48);
+    border: 1px solid rgba(255,255,255,0.72);
+    box-shadow: 0 1px 0 rgba(255,255,255,0.85) inset;
     border-radius: 12px;
     padding: 14px 16px 12px;
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
+    display: flex; flex-direction: column; gap: 2px;
   }
-  .v-label {
-    font-size: 0.62rem;
-    letter-spacing: 0.10em;
-    color: var(--blue);
-    font-weight: 700;
-    text-transform: uppercase;
-    margin-bottom: 4px;
-  }
-  .v-val-row {
-    display: flex;
-    align-items: baseline;
-    gap: 4px;
-    line-height: 1;
-  }
-  .v-val {
-    font-family: var(--mono);
-    font-size: 3rem;
-    font-weight: 400;
-    color: var(--navy);
-    line-height: 1;
-    letter-spacing: -0.02em;
-  }
-  .v-unit {
-    font-size: 0.9rem;
-    color: var(--muted);
-    font-weight: 400;
-  }
-  .v-trend {
-    font-size: 0.78rem;
-    margin-top: 7px;
-    font-weight: 600;
-    letter-spacing: 0.01em;
-  }
+  .v-label { font-size: 0.62rem; letter-spacing: 0.10em; color: var(--blue); font-weight: 700; text-transform: uppercase; margin-bottom: 4px; }
+  .v-val-row { display: flex; align-items: baseline; gap: 4px; line-height: 1; }
+  .v-val { font-family: 'DM Mono', monospace; font-size: 3rem; font-weight: 400; color: var(--navy); line-height: 1; letter-spacing: -0.02em; }
+  .v-unit { font-size: 0.9rem; color: var(--muted); font-weight: 400; }
+  .v-trend { font-size: 0.78rem; margin-top: 7px; font-weight: 600; }
 
-  /* ── ECG ── */
+  /* ECG */
   #ecg-wrap {
-    border-radius: 10px;
-    overflow: hidden;
+    border-radius: 10px; overflow: hidden;
     background: rgba(255,255,255,0.55);
     border: 1px solid rgba(255,255,255,0.72);
     box-shadow: 0 1px 0 rgba(255,255,255,0.85) inset;
+    line-height: 0;
   }
-  #ecg-canvas {
-    display: block;
-    width: 100%;
-    height: 90px;
-  }
+  #ecg-canvas { display: block; }
 </style>
 </head>
 <body>
@@ -210,278 +129,203 @@
 </div>
 
 <div id="panel">
-  <div class="corner tl"></div>
-  <div class="corner tr"></div>
-  <div class="corner bl"></div>
-  <div class="corner br"></div>
+  <div class="corner tl"></div><div class="corner tr"></div>
+  <div class="corner bl"></div><div class="corner br"></div>
 
-  <!-- HEADER -->
   <div id="live-row">
     <div class="pulse-dot"></div>
     <span class="live-label">Live &middot; AR Overlay Active</span>
   </div>
 
-  <!-- VITALS GRID -->
   <div id="vitals-grid">
     <div class="v-card">
       <div class="v-label">Heart Rate</div>
-      <div class="v-val-row">
-        <span class="v-val" id="val-hr">69</span>
-        <span class="v-unit">bpm</span>
-      </div>
-      <div class="v-trend" id="trend-hr">↑ Normal sinus</div>
+      <div class="v-val-row"><span class="v-val" id="val-hr">69</span><span class="v-unit">bpm</span></div>
+      <div class="v-trend" id="trend-hr"></div>
     </div>
-
     <div class="v-card">
       <div class="v-label">SpO₂</div>
-      <div class="v-val-row">
-        <span class="v-val" id="val-spo2">98</span>
-        <span class="v-unit">%</span>
-      </div>
-      <div class="v-trend" id="trend-spo2">→ Stable</div>
+      <div class="v-val-row"><span class="v-val" id="val-spo2">98</span><span class="v-unit">%</span></div>
+      <div class="v-trend" id="trend-spo2"></div>
     </div>
-
     <div class="v-card">
       <div class="v-label">Blood Pressure</div>
-      <div class="v-val-row">
-        <span class="v-val" id="val-bp">115</span>
-        <span class="v-unit" id="unit-bp">/78</span>
-      </div>
-      <div class="v-trend" id="trend-bp">↓ MAP 90</div>
+      <div class="v-val-row"><span class="v-val" id="val-bp">115</span><span class="v-unit" id="unit-bp">/78</span></div>
+      <div class="v-trend" id="trend-bp"></div>
     </div>
-
     <div class="v-card">
       <div class="v-label">Resp Rate</div>
-      <div class="v-val-row">
-        <span class="v-val" id="val-rr">14</span>
-        <span class="v-unit">/min</span>
-      </div>
-      <div class="v-trend" id="trend-rr">→ Normal</div>
+      <div class="v-val-row"><span class="v-val" id="val-rr">14</span><span class="v-unit">/min</span></div>
+      <div class="v-trend" id="trend-rr"></div>
     </div>
   </div>
 
-  <!-- ECG -->
   <div id="ecg-wrap">
     <canvas id="ecg-canvas"></canvas>
   </div>
 </div>
 
 <script>
-// ── SIMULATION ──────────────────────────────────────────────────────────────
-const INIT = { hr: 69, spo2: 98, sys: 115, dia: 78, rr: 14 };
-const VARIANCE = { hrLo: 60, hrHi: 80, spo2Lo: 96, spo2Hi: 99, rrLo: 13, rrHi: 17 };
+// ── VITALS SIMULATION ────────────────────────────────────────────────────────
+const INIT = { hr:69, spo2:98, sys:115, dia:78, rr:14 };
+const VAR  = { hrLo:60, hrHi:80, spo2Lo:96, spo2Hi:99, rrLo:13, rrHi:17 };
+
 let vitals  = { ...INIT };
-let targets = { ...INIT };
-let bpmRef  = { current: INIT.hr };
+let targets = { hr:72, spo2:97, sys:118, dia:76, rr:15 }; // start with different targets so movement is immediate
+let bpm = INIT.hr;
 
-function ri(lo, hi)            { return Math.floor(Math.random() * (hi - lo + 1)) + lo; }
-function lerp(a, b, t)         { return a + (b - a) * t; }
-function cl(v, lo, hi)         { return Math.max(lo, Math.min(hi, v)); }
+const ri   = (lo,hi) => Math.floor(Math.random()*(hi-lo+1))+lo;
+const lerp = (a,b,t) => a+(b-a)*t;
+const cl   = (v,lo,hi) => Math.max(lo,Math.min(hi,v));
 
-// schedule new drift targets every 4–9 s
-(function scheduleTargets() {
-  targets.hr   = ri(VARIANCE.hrLo, VARIANCE.hrHi);
-  targets.spo2 = ri(VARIANCE.spo2Lo, VARIANCE.spo2Hi);
-  targets.rr   = ri(VARIANCE.rrLo, VARIANCE.rrHi);
-  setTimeout(scheduleTargets, ri(4000, 9000));
-})();
+function newTargets() {
+  targets.hr   = ri(VAR.hrLo,  VAR.hrHi);
+  targets.spo2 = ri(VAR.spo2Lo, VAR.spo2Hi);
+  targets.rr   = ri(VAR.rrLo,  VAR.rrHi);
+  setTimeout(newTargets, ri(4000,9000));
+}
+setTimeout(newTargets, ri(3000,7000));
 
-// bp drifts slowly
 setInterval(() => {
-  targets.sys = cl(INIT.sys + ri(-12, 12), 80, 160);
-  targets.dia = cl(INIT.dia + ri(-8,   8), 50, 100);
+  targets.sys = cl(INIT.sys + ri(-12,12), 80,160);
+  targets.dia = cl(INIT.dia + ri(-8,8),   50,100);
 }, 60000);
 
-// tick every second
 setInterval(() => {
-  vitals.hr   = Math.round(cl(lerp(vitals.hr,   targets.hr,   0.18), 40, 180));
-  vitals.spo2 = Math.round(cl(lerp(vitals.spo2, targets.spo2, 0.25), 85, 100));
-  vitals.sys  = Math.round(cl(lerp(vitals.sys,  targets.sys,  0.10), 80, 180));
-  vitals.dia  = Math.round(cl(lerp(vitals.dia,  targets.dia,  0.10), 50, 110));
-  vitals.rr   = Math.round(cl(lerp(vitals.rr,   targets.rr,   0.15), 8,  30));
-  bpmRef.current = vitals.hr;
-  updateUI();
-}, 1000);
+  vitals.hr   = Math.round(cl(lerp(vitals.hr,   targets.hr,   0.2), 40,180));
+  vitals.spo2 = Math.round(cl(lerp(vitals.spo2, targets.spo2, 0.25),85,100));
+  vitals.sys  = Math.round(cl(lerp(vitals.sys,  targets.sys,  0.1), 80,180));
+  vitals.dia  = Math.round(cl(lerp(vitals.dia,  targets.dia,  0.1), 50,110));
+  vitals.rr   = Math.round(cl(lerp(vitals.rr,   targets.rr,   0.18),8,30));
+  bpm = vitals.hr;
+  renderUI();
+}, 800);
 
 // ── TRENDS ──────────────────────────────────────────────────────────────────
-const OK = "#16a34a", WARN = "#ea580c", CRIT = "#dc2626";
-
-function getTrend(key, v) {
-  if (key === "hr") {
-    if (v.hr < 50)  return { text: "↓ Severe bradycardia", color: CRIT };
-    if (v.hr < 60)  return { text: "↓ Bradycardia",        color: WARN };
-    if (v.hr > 130) return { text: "↑ Severe tachycardia", color: CRIT };
-    if (v.hr > 100) return { text: "↑ Tachycardia",        color: WARN };
-    return { text: "↑ Normal sinus", color: OK };
-  }
-  if (key === "spo2") {
-    if (v.spo2 >= 98) return { text: "→ Stable",          color: OK   };
-    if (v.spo2 >= 95) return { text: "↓ Adequate",        color: OK   };
-    if (v.spo2 >= 90) return { text: "↓ Low — monitor",   color: WARN };
-    return { text: "↓ Critical hypoxia", color: CRIT };
-  }
-  if (key === "bp") {
-    const map = Math.round((v.sys + 2 * v.dia) / 3);
-    if (map < 65)    return { text: `↓ MAP ${map} — shock`,     color: CRIT };
-    if (v.sys > 180) return { text: "↑ Hypertensive crisis",    color: CRIT };
-    if (v.sys > 140) return { text: `↑ Elevated · MAP ${map}`,  color: WARN };
-    return { text: `↓ MAP ${map}`, color: OK };
-  }
-  if (key === "rr") {
-    if (v.rr < 10) return { text: "↓ Bradypnea",  color: WARN };
-    if (v.rr > 24) return { text: "↑ Tachypnea",  color: WARN };
-    if (v.rr > 30) return { text: "↑ Severe",      color: CRIT };
-    return { text: "→ Normal", color: OK };
-  }
-  return { text: "", color: OK };
+const OK='#16a34a', WARN='#ea580c', CRIT='#dc2626';
+function trend(key,v) {
+  if (key==='hr')   { if(v.hr<50) return[`↓ Severe bradycardia`,CRIT]; if(v.hr<60) return[`↓ Bradycardia`,WARN]; if(v.hr>130) return[`↑ Severe tachycardia`,CRIT]; if(v.hr>100) return[`↑ Tachycardia`,WARN]; return[`↑ Normal sinus`,OK]; }
+  if (key==='spo2') { if(v.spo2>=98) return[`→ Stable`,OK]; if(v.spo2>=95) return[`↓ Adequate`,OK]; if(v.spo2>=90) return[`↓ Low — monitor`,WARN]; return[`↓ Critical hypoxia`,CRIT]; }
+  if (key==='bp')   { const m=Math.round((v.sys+2*v.dia)/3); if(m<65) return[`↓ MAP ${m} — shock`,CRIT]; if(v.sys>180) return[`↑ Hypertensive crisis`,CRIT]; if(v.sys>140) return[`↑ Elevated · MAP ${m}`,WARN]; return[`↓ MAP ${m}`,OK]; }
+  if (key==='rr')   { if(v.rr<10) return[`↓ Bradypnea`,WARN]; if(v.rr>24) return[`↑ Tachypnea`,WARN]; return[`→ Normal`,OK]; }
+  return ['',OK];
 }
 
-// ── UI ───────────────────────────────────────────────────────────────────────
-function updateUI() {
-  document.getElementById("val-hr").textContent   = vitals.hr;
-  document.getElementById("val-spo2").textContent = vitals.spo2;
-  document.getElementById("val-bp").textContent   = vitals.sys;
-  document.getElementById("unit-bp").textContent  = `/${vitals.dia}`;
-  document.getElementById("val-rr").textContent   = vitals.rr;
-
-  const keys = ["hr","spo2","bp","rr"];
-  for (const k of keys) {
-    const t = getTrend(k, vitals);
-    const el = document.getElementById(`trend-${k}`);
-    el.textContent  = t.text;
-    el.style.color  = t.color;
+function renderUI() {
+  document.getElementById('val-hr').textContent   = vitals.hr;
+  document.getElementById('val-spo2').textContent = vitals.spo2;
+  document.getElementById('val-bp').textContent   = vitals.sys;
+  document.getElementById('unit-bp').textContent  = '/'+vitals.dia;
+  document.getElementById('val-rr').textContent   = vitals.rr;
+  for (const k of ['hr','spo2','bp','rr']) {
+    const [text,color] = trend(k,vitals);
+    const el = document.getElementById('trend-'+k);
+    el.textContent = text;
+    el.style.color = color;
   }
 }
-updateUI();
+renderUI(); // paint initial values + trend colors immediately
 
-// ── ECG CANVAS ───────────────────────────────────────────────────────────────
-(function initECG() {
-  const canvas = document.getElementById("ecg-canvas");
+// ── ECG ──────────────────────────────────────────────────────────────────────
+window.addEventListener('load', function() {
+  const canvas = document.getElementById('ecg-canvas');
   const dpr    = window.devicePixelRatio || 1;
 
-  function resize() {
-    const W = canvas.parentElement.clientWidth || document.getElementById("panel").clientWidth - 52;
-    const H = 90;
-    canvas.style.width  = W + "px";
-    canvas.style.height = H + "px";
-    canvas.width  = Math.round(W * dpr);
-    canvas.height = Math.round(H * dpr);
-    buf = null;
-  }
-  // delay until after first paint so clientWidth is available
-  requestAnimationFrame(() => { requestAnimationFrame(() => { resize(); }); });
-  window.addEventListener("resize", resize);
+  // Use the panel's known content width: 560px panel - 52px padding = 508px
+  const CW = 508, CH = 90;
+  canvas.width        = CW * dpr;
+  canvas.height       = CH * dpr;
+  canvas.style.width  = CW + 'px';
+  canvas.style.height = CH + 'px';
 
-  // ECG waveform math (physiologically accurate P-QRS-T)
-  function tri(t, t0, dur, a) {
-    if (dur <= 0 || t < t0 || t > t0 + dur) return 0;
-    const h = dur * 0.5;
-    return (-Math.abs(t - (t0 + h)) + h) * (a / h);
+  const ctx = canvas.getContext('2d');
+  if (!ctx) return;
+
+  // P-QRS-T waveform math
+  function tri(t,t0,dur,a) {
+    if(dur<=0||t<t0||t>t0+dur) return 0;
+    const h=dur*0.5; return(-Math.abs(t-(t0+h))+h)*(a/h);
   }
-  function para(t, t0, dur, a) {
-    if (dur <= 0 || t < t0 || t > t0 + dur) return 0;
-    const h = dur * 0.5;
-    return (-(t - (t0 + h)) ** 2 + h * h) * (a / (h * h));
+  function para(t,t0,dur,a) {
+    if(dur<=0||t<t0||t>t0+dur) return 0;
+    const h=dur*0.5; return(-(t-(t0+h))**2+h*h)*(a/(h*h));
   }
-  function ecgAt(normT) {
-    const bpm = bpmRef.current;
-    const T = 60 / bpm, sqT = Math.sqrt(T);
-    const pd  = Math.max(0.01, 0.37*sqT - 0.22*T - 0.06);
-    const pq  = Math.max(0.01, 0.33*sqT - 0.18*T - 0.08);
-    const qrs = Math.max(0.01, 0.25*sqT - 0.16*T - 0.02);
-    const q   = qrs * 0.23, r = qrs * 0.42, s = qrs * 0.35;
-    const st  = Math.max(0.01, -0.09*sqT + 0.13*T + 0.04);
-    const td  = Math.max(0.01,  1.06*sqT - 0.51*T - 0.33);
-    const t   = ((normT % 1) + 1) % 1 * T;
-    const qS  = pd + pq, rS = qS + q, sS = rS + r, tS = qS + qrs + st;
-    let v = para(t, 0,   pd, 0.24);
-    v -= tri(t,  qS,  q, 0.025);
-    v += tri(t,  rS,  r, 1.0);
-    v -= tri(t,  sS,  s, 0.25);
-    v += para(t, tS, td, 0.35);
+  function ecgAt(nT) {
+    const T=60/bpm, sq=Math.sqrt(T);
+    const pd=Math.max(0.01,0.37*sq-0.22*T-0.06);
+    const pq=Math.max(0.01,0.33*sq-0.18*T-0.08);
+    const qrs=Math.max(0.01,0.25*sq-0.16*T-0.02);
+    const q=qrs*0.23,r=qrs*0.42,s=qrs*0.35;
+    const st=Math.max(0.01,-0.09*sq+0.13*T+0.04);
+    const td=Math.max(0.01, 1.06*sq-0.51*T-0.33);
+    const t=((nT%1)+1)%1*T;
+    const qS=pd+pq, rS=qS+q, sS=rS+r, tS=qS+qrs+st;
+    let v=para(t,0,pd,0.24);
+    v-=tri(t,qS,q,0.025); v+=tri(t,rS,r,1.0); v-=tri(t,sS,s,0.25);
+    v+=para(t,tS,td,0.35);
     return v;
   }
 
   const BEAT_PX = 280;
-  let buf = null, head = 0, beatT = 0, prevTime = null;
+  const buf = new Float32Array(CW);
+  let head=0, beatT=0, prev=null;
 
-  function frame(now) {
-    const W   = Math.round(canvas.width  / dpr);
-    const H   = Math.round(canvas.height / dpr);
-    const ctx = canvas.getContext("2d");
+  function draw(now) {
+    if(!prev) prev=now;
+    const dt=Math.min(now-prev,50);
+    prev=now;
 
-    if (!buf || buf.length !== W) {
-      buf = new Float32Array(W).fill(0);
-      head = 0; beatT = 0;
-    }
-    ctx.resetTransform();
-    ctx.scale(dpr, dpr);
-
-    if (!prevTime) prevTime = now;
-    const dt = Math.min(now - prevTime, 50);
-    prevTime = now;
-
-    const pxPerMs = BEAT_PX / (60000 / bpmRef.current);
-    const pxCount = Math.round(pxPerMs * dt);
-    const mid = H * 0.52, amp = H * 0.44;
-
-    for (let i = 0; i < pxCount; i++) {
-      buf[head] = ecgAt(beatT) * amp;
-      beatT = (beatT + 1 / BEAT_PX) % 1;
-      head  = (head  + 1) % W;
+    const mid=CH*0.52, amp=CH*0.44;
+    const pxCount=Math.round(BEAT_PX/(60000/bpm)*dt);
+    for(let i=0;i<pxCount;i++) {
+      buf[head]=ecgAt(beatT)*amp;
+      beatT=(beatT+1/BEAT_PX)%1;
+      head=(head+1)%CW;
     }
 
-    // background
-    ctx.clearRect(0, 0, W, H);
-    ctx.fillStyle = "rgba(255,255,255,0)";
-    ctx.fillRect(0, 0, W, H);
+    ctx.save();
+    ctx.scale(dpr,dpr);
+    ctx.clearRect(0,0,CW,CH);
 
-    // light blue grid — minor lines
-    const sb = BEAT_PX / 25;
-    ctx.lineWidth = 0.5;
-    ctx.strokeStyle = "rgba(37,99,235,0.09)";
+    // grid — minor
+    ctx.lineWidth=0.5; ctx.strokeStyle='rgba(37,99,235,0.09)';
     ctx.beginPath();
-    for (let x = 0; x <= W; x += sb) { ctx.moveTo(x, 0); ctx.lineTo(x, H); }
-    for (let y = 0; y <= H; y += H / 8) { ctx.moveTo(0, y); ctx.lineTo(W, y); }
+    const sb=BEAT_PX/25;
+    for(let x=0;x<=CW;x+=sb){ctx.moveTo(x,0);ctx.lineTo(x,CH);}
+    for(let y=0;y<=CH;y+=CH/8){ctx.moveTo(0,y);ctx.lineTo(CW,y);}
+    ctx.stroke();
+    // grid — major
+    ctx.lineWidth=0.5; ctx.strokeStyle='rgba(37,99,235,0.18)';
+    ctx.beginPath();
+    const lb=BEAT_PX/5;
+    for(let x=0;x<=CW;x+=lb){ctx.moveTo(x,0);ctx.lineTo(x,CH);}
     ctx.stroke();
 
-    // major lines
-    const lb = BEAT_PX / 5;
-    ctx.lineWidth = 0.5;
-    ctx.strokeStyle = "rgba(37,99,235,0.17)";
-    ctx.beginPath();
-    for (let x = 0; x <= W; x += lb) { ctx.moveTo(x, 0); ctx.lineTo(x, H); }
-    ctx.stroke();
-
-    // waveform — subtle glow pass
-    const p = new Path2D();
-    for (let i = 0; i < W; i++) {
-      const x = i, y = mid - buf[(head + i) % W];
-      i === 0 ? p.moveTo(x, y) : p.lineTo(x, y);
+    // waveform
+    ctx.lineJoin='round'; ctx.lineCap='round';
+    const p=new Path2D();
+    for(let i=0;i<CW;i++){
+      const x=i, y=mid-buf[(head+i)%CW];
+      i===0?p.moveTo(x,y):p.lineTo(x,y);
     }
-    ctx.lineWidth = 4;
-    ctx.strokeStyle = "rgba(37,99,235,0.12)";
-    ctx.lineJoin = "round";
-    ctx.lineCap  = "round";
-    ctx.stroke(p);
+    // glow
+    ctx.lineWidth=4; ctx.strokeStyle='rgba(37,99,235,0.12)'; ctx.stroke(p);
+    // crisp line
+    ctx.lineWidth=1.8; ctx.strokeStyle='#2563EB'; ctx.stroke(p);
 
-    // waveform — crisp blue line
-    ctx.lineWidth = 1.8;
-    ctx.strokeStyle = "#2563EB";
-    ctx.stroke(p);
+    // scan-head wipe
+    const hx=head===0?CW-1:head-1;
+    const g=ctx.createLinearGradient(hx-28,0,hx+4,0);
+    g.addColorStop(0,'rgba(255,255,255,0)');
+    g.addColorStop(1,'rgba(255,255,255,0.9)');
+    ctx.fillStyle=g; ctx.fillRect(hx-28,0,32,CH);
 
-    // scan-head fade
-    const hx = (head === 0 ? W - 1 : head - 1);
-    const grad = ctx.createLinearGradient(hx - 28, 0, hx + 4, 0);
-    grad.addColorStop(0, "rgba(255,255,255,0)");
-    grad.addColorStop(1, "rgba(255,255,255,0.92)");
-    ctx.fillStyle = grad;
-    ctx.fillRect(hx - 28, 0, 32, H);
-
-    requestAnimationFrame(frame);
+    ctx.restore();
+    requestAnimationFrame(draw);
   }
-  requestAnimationFrame(frame);
-})();
+
+  requestAnimationFrame(draw);
+});
 </script>
 </body>
 </html>
